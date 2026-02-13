@@ -1,3 +1,8 @@
+## 1.2.12
+
+- Add PR CI pipeline with formatting, analyze, tests, and `dart pub publish --dry-run` checks.
+- Restrict publish workflow to version tags (`v*.*.*`) and verify the tagged commit is on `master` before publishing.
+
 ## 1.2.11
 
 - Fork hotfix release based on upstream `oguzhnatly/flutter_carplay` `1.2.10`.

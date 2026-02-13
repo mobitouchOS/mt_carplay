@@ -3,10 +3,32 @@ name: Publish to pub.dev
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+*'
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: read
 
 jobs:
+  verify-tag-on-master:
+    name: Verify tag commit is on master
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify tagged commit belongs to master
+        run: |
+          git fetch origin master
+          git merge-base --is-ancestor "$GITHUB_SHA" "origin/master" || {
+            echo "Tag is not on master. Publishing is blocked."
+            exit 1
+          }
+
   publish:
+    needs: verify-tag-on-master
     permissions:
       id-token: write
     uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
