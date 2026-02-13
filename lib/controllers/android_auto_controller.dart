@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:flutter_carplay/constants/private_constants.dart';
+import 'package:mt_carplay/constants/private_constants.dart';
 
 import '../aa_models/list/list_item.dart';
 import '../aa_models/template.dart';

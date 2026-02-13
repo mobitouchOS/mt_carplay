@@ -1,5 +1,5 @@
-import 'package:flutter_carplay/flutter_carplay.dart';
-import 'package:flutter_carplay/helpers/carplay_helper.dart';
+import 'package:mt_carplay/mt_carplay.dart';
+import 'package:mt_carplay/helpers/carplay_helper.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -45,9 +45,10 @@ void main() {
     });
 
     test('make FCP channel id', () {
-      final String channelId = flutterCarplayHelper.makeFCPChannelId(event: '/event');
+      final String channelId =
+          flutterCarplayHelper.makeFCPChannelId(event: '/event');
 
-      expect(channelId, 'com.oguzhnatly.flutter_carplay/event');
+      expect(channelId, 'net.mobitouch.mt_carplay/event');
     });
   });
 }

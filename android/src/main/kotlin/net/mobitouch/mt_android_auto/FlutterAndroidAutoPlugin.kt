@@ -1,4 +1,4 @@
-package com.oguzhnatly.flutter_android_auto
+package net.mobitouch.mt_android_auto
 
 import androidx.car.app.CarContext
 import androidx.car.app.model.Action

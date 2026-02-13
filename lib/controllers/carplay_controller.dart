@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
-import 'package:flutter_carplay/constants/private_constants.dart';
-import 'package:flutter_carplay/flutter_carplay.dart';
-import 'package:flutter_carplay/helpers/carplay_helper.dart';
+import 'package:mt_carplay/constants/private_constants.dart';
+import 'package:mt_carplay/mt_carplay.dart';
+import 'package:mt_carplay/helpers/carplay_helper.dart';
 
 import '../models/template.dart';
 

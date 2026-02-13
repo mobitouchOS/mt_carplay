@@ -1,11 +1,11 @@
-package com.example.flutter_carplay_example
+package com.example.mt_carplay_example
 
 import android.content.Context
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.dart.DartExecutor
-import com.oguzhnatly.flutter_android_auto.FAAConstants
+import net.mobitouch.mt_android_auto.FAAConstants
 
 class MainActivity : FlutterActivity() {
     override fun provideFlutterEngine(context: Context): FlutterEngine? {

@@ -1,6 +1,6 @@
-# flutter_carplay_example
+# mt_carplay_example
 
-Demonstrates how to use the flutter_carplay plugin.
+Demonstrates how to use the mt_carplay plugin.
 
 ## Getting Started
 

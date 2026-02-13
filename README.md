@@ -1,14 +1,14 @@
-![Flutter CarPlay](https://raw.githubusercontent.com/oguzhnatly/flutter_carplay/master/previews/banner.png)
+![Flutter CarPlay](https://raw.githubusercontent.com/mobitouchOS/mt_carplay/master/previews/banner.png)
 
 # CarPlay and Android Auto with Flutter 🚗
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-orange.svg)](https://opensource.org/licenses/MIT)
-![Pub Version (including pre-releases)](https://img.shields.io/pub/v/flutter_carplay?include_prereleases)
-![Dart Pub Likes](https://badgen.net/pub/likes/flutter_carplay)
-![Dart Pub Multi-Platform](https://badgen.net/pub/flutter-platform/flutter_carplay)
-![DartPub Dart SDK](https://badgen.net/pub/sdk-version/flutter_carplay)
+![Pub Version (including pre-releases)](https://img.shields.io/pub/v/mt_carplay?include_prereleases)
+![Dart Pub Likes](https://badgen.net/pub/likes/mt_carplay)
+![Dart Pub Multi-Platform](https://badgen.net/pub/flutter-platform/mt_carplay)
+![DartPub Dart SDK](https://badgen.net/pub/sdk-version/mt_carplay)
 
-Flutter Apps now on Apple CarPlay and Android Auto ! `flutter_carplay` aims to make it safe to use apps made with Flutter in the car by integrating with CarPlay and Android Auto. The package takes the things you want to do while driving and puts them on the car's built-in display.
+Flutter Apps now on Apple CarPlay and Android Auto! `mt_carplay` aims to make it safe to use apps made with Flutter in the car by integrating with CarPlay and Android Auto. The package takes the things you want to do while driving and puts them on the car's built-in display.
 
 **✨ New in v1.2.0**: Android Auto support with limited list of feature. First step to future improvements.
 
@@ -22,14 +22,14 @@ It supports **only iOS 14.0+**. For general design guidance, see [Human Interfac
 
 ## 📚 Documentation
 
-For detailed guides and examples, check out the **[Wiki](https://github.com/oguzhnatly/flutter_carplay/wiki)**:
+For detailed guides and examples, check out the **[Wiki](https://github.com/mobitouchOS/mt_carplay/wiki)**:
 
-- [Getting Started](https://github.com/oguzhnatly/flutter_carplay/wiki/Getting-Started) — Installation and basic setup
-- [iOS Setup](https://github.com/oguzhnatly/flutter_carplay/wiki/iOS-Setup) — CarPlay entitlements and configuration
-- [Android Auto Setup](https://github.com/oguzhnatly/flutter_carplay/wiki/Android-Auto-Setup) — Android Auto configuration
-- [Templates](https://github.com/oguzhnatly/flutter_carplay/wiki/Templates) — All templates with code examples
-- [Troubleshooting](https://github.com/oguzhnatly/flutter_carplay/wiki/Troubleshooting) — Common issues and solutions
-- [FAQ](https://github.com/oguzhnatly/flutter_carplay/wiki/FAQ) — Frequently asked questions
+- [Getting Started](https://github.com/mobitouchOS/mt_carplay/wiki/Getting-Started) — Installation and basic setup
+- [iOS Setup](https://github.com/mobitouchOS/mt_carplay/wiki/iOS-Setup) — CarPlay entitlements and configuration
+- [Android Auto Setup](https://github.com/mobitouchOS/mt_carplay/wiki/Android-Auto-Setup) — Android Auto configuration
+- [Templates](https://github.com/mobitouchOS/mt_carplay/wiki/Templates) — All templates with code examples
+- [Troubleshooting](https://github.com/mobitouchOS/mt_carplay/wiki/Troubleshooting) — Common issues and solutions
+- [FAQ](https://github.com/mobitouchOS/mt_carplay/wiki/FAQ) — Frequently asked questions
 
 # Summary
 
@@ -61,7 +61,7 @@ Before you begin CarPlay integration, you must carefully read this section.
 
 CarPlay apps are built from a fixed set of user interface templates that iOS renders on the CarPlay screen. Each CarPlay app category can only use a restricted number of templates. Your app entitlement determines your access to templates.
 
-![Flutter CarPlay](https://raw.githubusercontent.com/oguzhnatly/flutter_carplay/master/previews/templates.png)
+![Flutter CarPlay](https://raw.githubusercontent.com/mobitouchOS/mt_carplay/master/previews/templates.png)
 
 ## Android Auto Templates
 
@@ -73,7 +73,7 @@ https://developer.android.com/design/ui/cars/guides/templates/overview
 
 ## Car Play Support
 
-`flutter_carplay` currently supports:
+`mt_carplay` currently supports:
 
 - [x] Action Sheet Template
 - [x] Alert Template
@@ -110,7 +110,7 @@ Special thanks to [@EArminjon](https://github.com/EArminjon), [@vanlooverenkoen]
 
 # Road Map
 
-Other templates will be supported in the future releases by `flutter_carplay`.
+Other templates will be supported in the future releases by `mt_carplay`.
 
 ## Car Play Road Map
 
@@ -129,13 +129,6 @@ Other templates will be supported in the future releases by `flutter_carplay`.
 - [ ] Search Template
 - [ ] Voice Control & "Hey Google" for hands-free voice activation
 - [ ] Contact Template
-
-# Contributing
-
-- Pull Requests are always welcome.
-- Pull Request Reviews are even more welcome! I need help in testing.
-- If you are interested in contributing more actively, please contact me at info@oguzhanatalay.com Thanks!
-- If you want to help in coding, join [Discord Server](https://discord.gg/Xz6WVezFfh), so we can chat over there.
 
 # Requesting the CarPlay Entitlements
 
@@ -159,7 +152,7 @@ For more detailed instructions about how to create and import the CarPlay Provis
 
 You are about to make some minor changes to your Xcode project after installing this package. This is due to the fact that It requires bitcode compilation which is missing in Flutter. You will procedure that will relocate (we won't remove or edit) some Flutter and its package engines. If you're planning to add this package to a critical project for you, you should proceed cautiously.
 
-**Please check [THE EXAMPLE PROJECT](https://github.com/oguzhnatly/flutter_carplay/tree/master/example) before you begin to the installation.**
+**Please check [THE EXAMPLE PROJECT](https://github.com/mobitouchOS/mt_carplay/tree/master/example) before you begin to the installation.**
 
 THE INSTALLATION STEPS MAY BE DIFFICULT OR MAY NOT WORK PROPERLY WITH A FEW PACKAGES IN YOUR CURRENT PROJECT THAT COMMUNICATE WITH THE FLUTTER ENGINE. IF YOU ARE NOT COMPLETELY SURE WHAT YOU ARE DOING, PLEASE CREATE AN ISSUE, SO THAT I CAN HELP YOU TO SOLVE YOUR PROBLEM OR EXPLAIN WHAT YOU NEED TO.
 
@@ -191,7 +184,7 @@ $ cd ios && pod install --repo-update
 
 2. Open `ios/Runner.xcworkspace` in Xcode. In your project navigator, open `AppDelegate.swift`.
 
-   ![Flutter CarPlay](https://raw.githubusercontent.com/oguzhnatly/flutter_carplay/master/previews/step2.png)
+   ![Flutter CarPlay](https://raw.githubusercontent.com/mobitouchOS/mt_carplay/master/previews/step2.png)
 
    Delete the specified codes below from the application function in `AppDelegate.swift`, and change it with the code below:
 
@@ -232,7 +225,7 @@ let flutterEngine = FlutterEngine(name: "SharedEngine", project: nil, allowHeadl
    }
    ```
 
-   ![Flutter CarPlay](https://raw.githubusercontent.com/oguzhnatly/flutter_carplay/master/previews/step3.png)
+   ![Flutter CarPlay](https://raw.githubusercontent.com/mobitouchOS/mt_carplay/master/previews/step3.png)
 
 4. One more step, open the `Info.plist` file whether in your favorite code editor or in the Xcode. I'm going to share the base code, so if you open in the Xcode, you can fill with the raw keys with the values.
 
@@ -249,7 +242,7 @@ let flutterEngine = FlutterEngine(name: "SharedEngine", project: nil, allowHeadl
            <key>UISceneConfigurationName</key>
            <string>CarPlay Configuration</string>
            <key>UISceneDelegateClassName</key>
-           <string>flutter_carplay.FlutterCarPlaySceneDelegate</string>
+           <string>mt_carplay.FlutterCarPlaySceneDelegate</string>
          </dict>
        </array>
        <key>UIWindowSceneSessionRoleApplication</key>
@@ -309,7 +302,7 @@ Inside the `<application>` tag:
             android:name="androidx.car.app.minCarApiLevel"
             android:value="1" />
     <service
-            android:name="com.oguzhnatly.flutter_android_auto.AndroidAutoService"
+            android:name="net.mobitouch.mt_android_auto.AndroidAutoService"
             android:exported="true">
 
         <intent-filter>
@@ -341,14 +334,14 @@ On Android Auto Service, use the same engine as the app if the app is already ru
 To avoid creating multiple engines, you need to override the `provideFlutterEngine` and `configureFlutterEngine` methods as below :
 
 ```kotlin
-package com.example.flutter_carplay_example
+package com.example.mt_carplay_example
 
 import android.content.Context
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.embedding.engine.dart.DartExecutor
-import com.oguzhnatly.flutter_android_auto.FAAConstants
+import net.mobitouch.mt_android_auto.FAAConstants
 
 class MainActivity : FlutterActivity() {
     override fun provideFlutterEngine(context: Context): FlutterEngine? {
@@ -366,20 +359,20 @@ class MainActivity : FlutterActivity() {
 
 ## Solve problems configuring your project
 
-Take a look at [this detailed issue reply](https://github.com/oguzhnatly/flutter_carplay/issues/3#issuecomment-926146126) if you got any error.
+Take a look at [this detailed issue reply](https://github.com/mobitouchOS/mt_carplay/issues/3#issuecomment-926146126) if you got any error.
 
 ## Usage & Features
 
 To see a complete example for both CarPlay and Android Auto, check the example project.
 
-[**See Full Example**](https://github.com/oguzhnatly/flutter_carplay/blob/master/example/lib/main.dart)
+[**See Full Example**](https://github.com/mobitouchOS/mt_carplay/blob/master/example/lib/main.dart)
 
 ### Basic Usage for Car Play
 
 - Import the all classes that you need from just one file:
 
 ```dart
-import 'package:flutter_carplay/flutter_carplay.dart';
+import 'package:mt_carplay/mt_carplay.dart';
 ```
 
 - Initialize the CarPlay Controllers, set a root template for the CarPlay view hierarchy and ensure to well update the root template :
@@ -542,7 +535,7 @@ CarPlay supports general purpose templates such as alerts, lists, and tab bars. 
 
 ### Tab Bar Template
 
-![Flutter CarPlay](https://raw.githubusercontent.com/oguzhnatly/flutter_carplay/master/previews/tabbar_template.png)
+![Flutter CarPlay](https://raw.githubusercontent.com/mobitouchOS/mt_carplay/master/previews/tabbar_template.png)
 
 The tab bar is a multi-purpose container for other templates, with each template occupying one tab in the tab bar.
 
@@ -608,7 +601,7 @@ FlutterCarplay.setRootTemplate(rootTemplate: tabBarTemplate, animated: true);
 
 ### Grid Template
 
-![Flutter CarPlay](https://raw.githubusercontent.com/oguzhnatly/flutter_carplay/master/previews/grid_template.png)
+![Flutter CarPlay](https://raw.githubusercontent.com/mobitouchOS/mt_carplay/master/previews/grid_template.png)
 
 Grid Template is a specific style of menu that presents up to 8 items represented by an image and a title. Use the grid template to let people select from a fixed list of categories.
 
@@ -635,7 +628,7 @@ FlutterCarplay.setRootTemplate(rootTemplate: gridTemplate, animated: true);
 
 ### Alert Template
 
-![Flutter CarPlay](https://raw.githubusercontent.com/oguzhnatly/flutter_carplay/master/previews/alert_template.png)
+![Flutter CarPlay](https://raw.githubusercontent.com/mobitouchOS/mt_carplay/master/previews/alert_template.png)
 
 Alerts provide important information about your app's status. An alert consists of a title and one or more buttons, depending on the type.
 
@@ -677,7 +670,7 @@ FlutterCarplay.showAlert(template: alertTemplate, animated: true);
 
 ### Action Sheet Template
 
-![Flutter CarPlay](https://raw.githubusercontent.com/oguzhnatly/flutter_carplay/master/previews/actionsheet_template.png)
+![Flutter CarPlay](https://raw.githubusercontent.com/mobitouchOS/mt_carplay/master/previews/actionsheet_template.png)
 
 Action Sheet Template is a type of alert that appears when control or action is taken and gives a collection of options based on the current context.
 
@@ -720,7 +713,7 @@ FlutterCarplay.showActionSheet(template: actionSheetTemplate, animated: true);
 
 ### List Template
 
-![Flutter CarPlay](https://raw.githubusercontent.com/oguzhnatly/flutter_carplay/master/previews/list_template.png)
+![Flutter CarPlay](https://raw.githubusercontent.com/mobitouchOS/mt_carplay/master/previews/list_template.png)
 
 A list presents data as a scrolling, single-column table of rows that can be divided into sections. Lists are ideal for text-based content, and can be used as a means of navigation for hierarchical information. Each item in a list can include attributes such as an icon, title, subtitle, disclosure indicator, progress indicator, playback status, or read status.
 
@@ -777,7 +770,7 @@ FlutterCarplay.setRootTemplate(rootTemplate: listTemplate, animated: true);
 
 ### Information Template
 
-![Flutter CarPlay](https://raw.githubusercontent.com/oguzhnatly/flutter_carplay/master/previews/information_template.png)
+![Flutter CarPlay](https://raw.githubusercontent.com/mobitouchOS/mt_carplay/master/previews/information_template.png)
 
 An Information Template shows a list of items, and actions (max. three)) as array of text buttons.
 
@@ -814,7 +807,7 @@ FlutterCarplay.setRootTemplate(rootTemplate: informationTemplate, animated: true
 
 ### Point Of Interest Template
 
-![Flutter CarPlay](https://raw.githubusercontent.com/oguzhnatly/flutter_carplay/master/previews/point_of_interest_template.png)
+![Flutter CarPlay](https://raw.githubusercontent.com/mobitouchOS/mt_carplay/master/previews/point_of_interest_template.png)
 
 A Point Of Interest template shows multiple points of interest on a Map
 The map section is determined by the points of interest.
@@ -868,21 +861,18 @@ FlutterCarplay.showSharedNowPlaying(animated: true);
 
 # Support
 
-If this package has been helpful, consider supporting its development:
-
-[![Sponsor on GitHub](https://img.shields.io/badge/Sponsor-GitHub-ea4aaa?logo=github)](https://github.com/sponsors/oguzhnatly)
-
-Your support helps maintain and improve this package! ❤️
+This is a fork of [flutter_carplay](https://github.com/oguzhnatly/flutter_carplay) by Oğuzhan Atalay, maintained by [Mobitouch](https://github.com/mobitouchOS).
 
 # Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=oguzhnatly/flutter_carplay&type=Date)](https://star-history.com/#oguzhnatly/flutter_carplay&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=mobitouchOS/mt_carplay&type=Date)](https://star-history.com/#mobitouchOS/mt_carplay&Date)
 
 # LICENSE
 
-[**MIT License**](https://github.com/oguzhnatly/flutter_carplay/blob/master/LICENSE)
+[**MIT License**](https://github.com/mobitouchOS/mt_carplay/blob/master/LICENSE)
 
 Copyright (c) 2021 Oğuzhan Atalay
+Copyright (c) 2026 Mobitouch
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -1,5 +1,5 @@
-import 'package:flutter_carplay/helpers/enum_utils.dart';
-import 'package:flutter_carplay/models/button/text_button.dart';
+import 'package:mt_carplay/helpers/enum_utils.dart';
+import 'package:mt_carplay/models/button/text_button.dart';
 import 'package:uuid/uuid.dart';
 
 import '../template.dart';

@@ -1,21 +1,21 @@
 PODS:
   - Flutter (1.0.0)
-  - flutter_carplay (1.1.0):
+  - mt_carplay (1.1.0):
     - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
-  - flutter_carplay (from `.symlinks/plugins/flutter_carplay/ios`)
+  - mt_carplay (from `.symlinks/plugins/mt_carplay/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
-  flutter_carplay:
-    :path: ".symlinks/plugins/flutter_carplay/ios"
+  mt_carplay:
+    :path: ".symlinks/plugins/mt_carplay/ios"
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  flutter_carplay: 7326e72d693f7540711bf2d80be7e5aee4fe22b5
+  mt_carplay: 96e20fceb5451cd8b02395df819c191041218b48
 
 PODFILE CHECKSUM: 775997f741c536251164e3eacf6e34abf2eb7a17
 

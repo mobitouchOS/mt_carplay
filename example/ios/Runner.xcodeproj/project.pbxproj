@@ -23,7 +23,7 @@
 		12ED02881CC694D888E569D6 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
-		21348FF726D7F1690065DC33 /* flutter_carplay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = flutter_carplay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		21348FF726D7F1690065DC33 /* mt_carplay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = mt_carplay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		21348FFD26D80DAF0065DC33 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		2135D3CF26D3B628005AA283 /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		216A214E26D8153100789FD2 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
@@ -119,7 +119,7 @@
 			children = (
 				216A214E26D8153100789FD2 /* CoreMedia.framework */,
 				21348FFD26D80DAF0065DC33 /* MediaPlayer.framework */,
-				21348FF726D7F1690065DC33 /* flutter_carplay.framework */,
+				21348FF726D7F1690065DC33 /* mt_carplay.framework */,
 				21BAEF7F26D2E419007E9D68 /* CarPlay.framework */,
 				0F4D14DFA8EBA8D150E2F76A /* Pods_Runner.framework */,
 			);
@@ -372,7 +372,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.oguzhnatly.flutterCarplayExample;
+				PRODUCT_BUNDLE_IDENTIFIER = net.mobitouch.mtCarplayExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -507,7 +507,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.oguzhnatly.flutterCarplayExample;
+				PRODUCT_BUNDLE_IDENTIFIER = net.mobitouch.mtCarplayExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -536,7 +536,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.oguzhnatly.flutterCarplayExample;
+				PRODUCT_BUNDLE_IDENTIFIER = net.mobitouch.mtCarplayExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";

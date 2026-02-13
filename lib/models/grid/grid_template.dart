@@ -1,4 +1,4 @@
-import 'package:flutter_carplay/models/grid/grid_button.dart';
+import 'package:mt_carplay/models/grid/grid_button.dart';
 import 'package:uuid/uuid.dart';
 
 import '../template.dart';

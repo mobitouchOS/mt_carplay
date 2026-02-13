@@ -1,5 +1,5 @@
-import 'package:flutter_carplay/aa_models/template.dart';
-import 'package:flutter_carplay/flutter_carplay.dart';
+import 'package:mt_carplay/aa_models/template.dart';
+import 'package:mt_carplay/mt_carplay.dart';
 
 class FlutterAutoAndroidHelper {
   const FlutterAutoAndroidHelper();
@@ -34,5 +34,5 @@ class FlutterAutoAndroidHelper {
   }
 
   String makeFAAChannelId({String event = ''}) =>
-      'com.oguzhnatly.flutter_android_auto$event';
+      'net.mobitouch.mt_android_auto$event';
 }

@@ -1,6 +1,6 @@
 //
 //  FCPSharedNowPlaying.swift
-//  flutter_carplay
+//  mt_carplay
 //
 //  Created by Koen Van Looveren on 16/09/2022.
 //

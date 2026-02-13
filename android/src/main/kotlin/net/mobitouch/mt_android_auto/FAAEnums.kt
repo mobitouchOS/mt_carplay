@@ -1,4 +1,4 @@
-package com.oguzhnatly.flutter_android_auto
+package net.mobitouch.mt_android_auto
 
 enum class FAAConnectionTypes {
     connected,

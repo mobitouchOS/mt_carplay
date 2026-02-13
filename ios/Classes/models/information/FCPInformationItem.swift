@@ -1,6 +1,6 @@
 //
 //  FCPPointOfInterestTemplate.swift
-//  flutter_carplay
+//  mt_carplay
 //
 //  Created by Olaf Schneider on 17.02.22.
 //

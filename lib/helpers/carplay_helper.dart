@@ -1,4 +1,4 @@
-import 'package:flutter_carplay/flutter_carplay.dart';
+import 'package:mt_carplay/mt_carplay.dart';
 
 class FlutterCarplayHelper {
   CPListItem? findCPListItem({
@@ -35,5 +35,5 @@ class FlutterCarplayHelper {
   }
 
   String makeFCPChannelId({String? event = ''}) =>
-      'com.oguzhnatly.flutter_carplay${event!}';
+      'net.mobitouch.mt_carplay${event!}';
 }

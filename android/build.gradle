@@ -1,4 +1,4 @@
-group = "com.example.flutter_carplay"
+group = "com.example.mt_carplay"
 version = "1.0-SNAPSHOT"
 
 buildscript {
@@ -25,7 +25,7 @@ apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
 
 android {
-    namespace = "com.oguzhnatly.flutter_android_auto"
+    namespace = "net.mobitouch.mt_android_auto"
 
     compileSdk = 35
 

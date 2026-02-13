@@ -1,15 +1,15 @@
 #
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
-# Run `pod lib lint flutter_carplay.podspec` to validate before publishing.
+# Run `pod lib lint mt_carplay.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'flutter_carplay'
+  s.name             = 'mt_carplay'
   s.version          = '1.1.0'
   s.summary          = 'Flutter Apps are now on Apple CarPlay.'
   s.description      = <<-DESC
 Flutter Apps are now on Apple CarPlay. This package aims to make it safe to use iPhone apps made with Flutter in the car by integrating with CarPlay.
                        DESC
-  s.homepage         = 'https://github.com/oguzhnatly/flutter_carplay'
+  s.homepage         = 'https://github.com/mobitouchOS/mt_carplay'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Oğuzhan Atalay' => 'info@oguzhanatalay.com' }
   s.source           = { :path => '.' }

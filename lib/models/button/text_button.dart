@@ -1,4 +1,4 @@
-import 'package:flutter_carplay/helpers/enum_utils.dart';
+import 'package:mt_carplay/helpers/enum_utils.dart';
 import 'package:uuid/uuid.dart';
 
 enum CPTextButtonStyles { normal, cancel, confirm }

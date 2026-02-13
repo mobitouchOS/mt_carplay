@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_carplay/constants/private_constants.dart';
-import 'package:flutter_carplay/controllers/carplay_controller.dart';
-import 'package:flutter_carplay/flutter_carplay.dart';
+import 'package:mt_carplay/constants/private_constants.dart';
+import 'package:mt_carplay/controllers/carplay_controller.dart';
+import 'package:mt_carplay/mt_carplay.dart';
 
 import 'models/template.dart';
 

@@ -1,5 +1,5 @@
-import 'package:flutter_carplay/models/button/bar_button.dart';
-import 'package:flutter_carplay/models/list/list_section.dart';
+import 'package:mt_carplay/models/button/bar_button.dart';
+import 'package:mt_carplay/models/list/list_section.dart';
 import 'package:uuid/uuid.dart';
 
 import '../template.dart';

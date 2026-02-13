@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_carplay/constants/private_constants.dart';
-import 'package:flutter_carplay/flutter_carplay.dart';
+import 'package:mt_carplay/constants/private_constants.dart';
+import 'package:mt_carplay/mt_carplay.dart';
 
 import 'aa_models/template.dart';
 import 'controllers/android_auto_controller.dart';

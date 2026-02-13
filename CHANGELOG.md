@@ -1,8 +1,13 @@
+## 1.2.11
+
+- Fork hotfix release based on upstream `oguzhnatly/flutter_carplay` `1.2.10`.
+- Fix failed cast on `updateCPListItem` when not in the root template.
+
 ## 1.2.10
 
 - Add `@objc(FlutterCarPlaySceneDelegate)` annotation for iOS 26 compatibility (#87)
 
-This enables apps to reference the delegate class as `flutter_carplay.FlutterCarPlaySceneDelegate` in their scene manifest configuration. Required for runtime class discovery via `NSClassFromString`. Thanks @APIUM!
+This enables apps to reference the delegate class as `mt_carplay.FlutterCarPlaySceneDelegate` in their scene manifest configuration. Required for runtime class discovery via `NSClassFromString`. Thanks @APIUM!
 
 ## 1.2.9
 

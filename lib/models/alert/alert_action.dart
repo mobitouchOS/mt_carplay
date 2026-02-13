@@ -1,5 +1,5 @@
-import 'package:flutter_carplay/helpers/enum_utils.dart';
-import 'package:flutter_carplay/models/alert/alert_constants.dart';
+import 'package:mt_carplay/helpers/enum_utils.dart';
+import 'package:mt_carplay/models/alert/alert_constants.dart';
 import 'package:uuid/uuid.dart';
 
 /// An object that encapsulates an action the user can take on [CPActionSheetTemplate] or [CPAlertTemplate].

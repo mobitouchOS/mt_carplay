@@ -1,9 +1,9 @@
-import 'package:flutter_carplay/models/action_sheet/action_sheet_template.dart';
-import 'package:flutter_carplay/models/alert/alert_template.dart';
-import 'package:flutter_carplay/models/grid/grid_template.dart';
-import 'package:flutter_carplay/models/information/information_template.dart';
-import 'package:flutter_carplay/models/list/list_template.dart';
-import 'package:flutter_carplay/models/poi/poi_template.dart';
+import 'package:mt_carplay/models/action_sheet/action_sheet_template.dart';
+import 'package:mt_carplay/models/alert/alert_template.dart';
+import 'package:mt_carplay/models/grid/grid_template.dart';
+import 'package:mt_carplay/models/information/information_template.dart';
+import 'package:mt_carplay/models/list/list_template.dart';
+import 'package:mt_carplay/models/poi/poi_template.dart';
 import 'package:uuid/uuid.dart';
 
 import '../template.dart';

@@ -3,9 +3,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_carplay/controllers/android_auto_controller.dart';
-import 'package:flutter_carplay/controllers/carplay_controller.dart';
-import 'package:flutter_carplay/flutter_carplay.dart';
+import 'package:mt_carplay/controllers/android_auto_controller.dart';
+import 'package:mt_carplay/controllers/carplay_controller.dart';
+import 'package:mt_carplay/mt_carplay.dart';
 
 void main() {
   runApp(const MyApp());

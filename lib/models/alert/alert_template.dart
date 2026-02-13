@@ -1,4 +1,4 @@
-import 'package:flutter_carplay/models/alert/alert_action.dart';
+import 'package:mt_carplay/models/alert/alert_action.dart';
 import 'package:uuid/uuid.dart';
 
 import '../template.dart';

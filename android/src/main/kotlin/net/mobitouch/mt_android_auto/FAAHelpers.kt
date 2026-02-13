@@ -1,4 +1,4 @@
-package com.oguzhnatly.flutter_android_auto
+package net.mobitouch.mt_android_auto
 
 import android.content.Context
 import android.graphics.BitmapFactory
@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 
 object FAAHelpers {
     fun makeFCPChannelId(event: String): String {
-        return "com.oguzhnatly.flutter_android_auto" + event
+        return "net.mobitouch.mt_android_auto" + event
     }
 }
 
