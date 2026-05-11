@@ -1,3 +1,9 @@
+## 1.2.13
+
+- Add Swift Package Manager support for iOS alongside the existing CocoaPods integration.
+
+Sources moved to `ios/mt_carplay/Sources/mt_carplay/` and a `Package.swift` is shipped at `ios/mt_carplay/Package.swift`. The Objective-C registration shim was replaced with a small Swift bridge (`FlutterCarplayPlugin.swift`) annotated `@objc(FlutterCarplayPlugin)`, so apps integrating via either CocoaPods or SPM resolve the plugin class identically. The podspec now also tracks the pubspec version (previously pinned at `1.1.0`).
+
 ## 1.2.12
 
 - Add PR CI pipeline with formatting, analyze, tests, and `dart pub publish --dry-run` checks.
