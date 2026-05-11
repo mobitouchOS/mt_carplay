@@ -1,6 +1,6 @@
 PODS:
   - Flutter (1.0.0)
-  - mt_carplay (1.1.0):
+  - mt_carplay (1.2.12):
     - Flutter
 
 DEPENDENCIES:
@@ -15,7 +15,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  mt_carplay: 96e20fceb5451cd8b02395df819c191041218b48
+  mt_carplay: 3e0988e8b5289da0db46659d7c918e36d9e2f588
 
 PODFILE CHECKSUM: 775997f741c536251164e3eacf6e34abf2eb7a17
 
