@@ -17,9 +17,18 @@ enum FCPChannelTypes {
   static let forceUpdateRootTemplate = "forceUpdateRootTemplate"
   static let updateListTemplateSections = "updateListTemplateSections"
   static let updateTabBarTemplates = "updateTabBarTemplates"
+  static let updateInformationTemplateItems = "updateInformationTemplateItems"
+  static let updateInformationTemplateActions = "updateInformationTemplateActions"
   static let updateListItem = "updateListItem"
+  static let updateListImageRowItem = "updateListImageRowItem"
+  static let updateListImageRowItemElement = "updateListImageRowItemElement"
   static let onListItemSelected = "onFCPListItemSelected"
   static let onListItemSelectedComplete = "onFCPListItemSelectedComplete"
+  static let onListImageRowItemSelected = "onFCPListImageRowItemSelected"
+  static let onListImageRowItemSelectedComplete = "onFCPListImageRowItemSelectedComplete"
+  static let onListImageRowItemElementSelected = "onFCPListImageRowItemElementSelected"
+  static let onListImageRowItemElementSelectedComplete =
+    "onFCPListImageRowItemElementSelectedComplete"
   static let onAlertActionPressed = "onFCPAlertActionPressed"
   static let setAlert = "setAlert"
   static let onPresentStateChanged = "onPresentStateChanged"
@@ -33,6 +42,14 @@ enum FCPChannelTypes {
   static let onTextButtonPressed = "onTextButtonPressed"
   static let popToRootTemplate = "popToRootTemplate"
   static let onScreenBackButtonPressed = "onScreenBackButtonPressed"
+  static let getMaximumNumberOfGridImages = "getMaximumNumberOfGridImages"
+  static let getMaximumSectionCount = "getMaximumSectionCount"
+  static let getMaximumItemCount = "getMaximumItemCount"
+  static let onSearchTextUpdated = "onSearchTextUpdated"
+  static let onSearchResultSelected = "onSearchResultSelected"
+  static let onSearchButtonPressed = "onSearchButtonPressed"
+  static let updateSearchResults = "updateSearchResults"
+  static let onSearchResultSelectedComplete = "onSearchResultSelectedComplete"
 }
 
 enum FCPAlertActionTypes {
@@ -40,7 +57,16 @@ enum FCPAlertActionTypes {
   case ALERT
 }
 
-enum FCPListTemplateTypes {
-  case PART_OF_GRID_TEMPLATE
-  case DEFAULT
+func getAlertActionType(fromString: String?) -> FCPAlertActionTypes {
+  guard let fromString = fromString else {
+    return .ALERT
+  }
+  switch fromString {
+  case "ACTION_SHEET":
+    return .ACTION_SHEET
+  case "ALERT":
+    return .ALERT
+  default:
+    return .ALERT
+  }
 }
