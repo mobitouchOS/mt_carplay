@@ -1,3 +1,52 @@
+## Next
+
+## 1.5.0
+
+Merge upstream `oguzhnatly/flutter_carplay` v1.5.0 into the fork. This adopts all upstream changes from upstream 1.2.11 through 1.5.0 (entries below), including:
+
+- Fix `List<CPTemplate>` is not a subtype of `Iterable<CPListTemplate>` in `updateTemplates` (#92) (ty @EArminjon)
+- Add Android Auto alert, grid, and tab bar templates (#102) (ty @Gabriellsp)
+- Add Android Auto modal alert presentation and dismissal APIs (#102) (ty @Gabriellsp)
+- Add Android Auto list loading messages and empty view titles (#102) (ty @Gabriellsp)
+
+## 1.4.0
+
+- Add `CPSearchTemplate` support for CarPlay search flows (#96) (ty @sINFdorako)
+- Add Android Auto list item, section, and template IDs, including selection and toggle handling (#105) (ty @JulianBissekkou)
+- Add Flutter asset SVG support across CarPlay and Android Auto image fields (#112) (ty @JulianBissekkou)
+- Add Android Auto `AAMessageTemplate` and `AALongMessageTemplate` support with update APIs (#116) (ty @JulianBissekkou)
+- Add Android Auto `AAPaneTemplate` support with update APIs (#119) (ty @JulianBissekkou)
+- Clarify the difference between Android Auto and Android Automotive OS in the README (#115) (ty @JulianBissekkou)
+
+## 1.3.3
+
+- Expose `onPop` callbacks on pushed CarPlay templates (#106) (ty @sINFdorako)
+- Add Android Auto list item, section, and template IDs (#103) (ty @JulianBissekkou)
+
+## 1.3.2
+
+- Avoid iOS crash around image management (#101) (ty @EArminjon)
+
+## 1.3.1
+
+- Fix crash on iOS 18 and earlier when `CPListImageRowItem` is truncated by the host and fewer image slots are available than requested (#98) (ty @EArminjon)
+- Add update methods for CPInformationTemplate items and actions (#97) (ty @sINFdorako)
+- Document `CPListImageRowItem` support and `CPInformationTemplate` update methods in the README
+- Update the security policy supported versions to include `1.3.x`
+
+## 1.3.0
+
+- Implement CPListImageRowItem with full support for cardElements, condensedElements, elements, gridElements, and imageGridElements (#94) (ty @EArminjon)
+- Support individual update for CPListImageRowItem and CPListImageRowItemElement
+- Expose tabTitle, systemIcon, and showsTabBadges on CPTabBarTemplate
+- Rename enums and classes to be 1:1 with Apple documentation (breaking change)
+- Rework UUID logic to allow custom elementId on all models
+- Expose convenient update methods on CPListItem and other templates
+- Improve image loading error handling with proper error callbacks
+- Fix app crash when images are empty string
+- Add missing GridButton handler as optional (not required)
+- Update uuid dependency to 4.5.3
+
 ## 1.2.13
 
 - Add Swift Package Manager support for iOS alongside the existing CocoaPods integration.
@@ -12,7 +61,7 @@ Sources moved to `ios/mt_carplay/Sources/mt_carplay/` and a `Package.swift` is s
 ## 1.2.11
 
 - Fork hotfix release based on upstream `oguzhnatly/flutter_carplay` `1.2.10`.
-- Fix failed cast on `updateCPListItem` when not in the root template.
+- Fix failed cast on `updateCPListItem` when not in the root template (upstreamed as #91).
 
 ## 1.2.10
 

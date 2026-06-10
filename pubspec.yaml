@@ -1,6 +1,6 @@
 name: mt_carplay
 description: Flutter Apps are now on Apple CarPlay and Android Auto. This package aims to make it safe to use apps made with Flutter in the car by integrating with CarPlay or Android Auto.
-version: 1.2.13
+version: 1.5.0
 homepage: https://github.com/mobitouchOS/mt_carplay#readme
 repository: https://github.com/mobitouchOS/mt_carplay
 issue_tracker: https://github.com/mobitouchOS/mt_carplay/issues
@@ -12,7 +12,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  uuid: ^4.5.1
+  flutter_svg: ^2.0.10+1
+  uuid: ^4.5.3
 
 dev_dependencies:
   flutter_test:

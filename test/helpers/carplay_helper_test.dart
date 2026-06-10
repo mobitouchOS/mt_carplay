@@ -1,5 +1,4 @@
 import 'package:mt_carplay/mt_carplay.dart';
-import 'package:mt_carplay/helpers/carplay_helper.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -18,25 +17,27 @@ void main() {
 
     final templates = [
       CPTabBarTemplate(
-        title: '<CPTabBarTemplate>',
+        tabTitle: '<CPTabBarTemplate>',
         templates: [cpListTemplate],
       ),
       cpListTemplate,
     ];
 
     setUp(() {
-      flutterCarplayHelper = FlutterCarplayHelper();
+      flutterCarplayHelper = const FlutterCarplayHelper();
     });
 
     test('find CPListItem from dynamic list item and element id', () {
-      final CPListItem? item = flutterCarplayHelper.findCPListItem(
+      final CPListTemplateItem? item =
+          flutterCarplayHelper.findCPListTemplateItem(
         templates: templates,
         elementId: cpListItem.uniqueId,
       );
 
       expect(item, cpListItem);
 
-      final CPListItem? nullableItem = flutterCarplayHelper.findCPListItem(
+      final CPListTemplateItem? nullableItem =
+          flutterCarplayHelper.findCPListTemplateItem(
         templates: templates,
         elementId: '',
       );

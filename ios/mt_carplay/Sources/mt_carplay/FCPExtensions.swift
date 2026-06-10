@@ -5,26 +5,83 @@
 //  Created by Oğuzhan Atalay on 21.08.2021.
 //
 
+import Flutter
 import UIKit
+
+private let fcpTintedImageCache = NSCache<NSString, UIImage>()
+
+// Creates a UIImage from raw PNG bytes sent over the MethodChannel.
+// Used for Flutter asset SVGs that are rasterized to PNG on the Dart side,
+// since UIImage cannot decode SVG directly. Returns nil when the data is
+// missing or cannot be decoded so callers can fall back to string resolution.
+func makeUIImage(fromBytes data: FlutterStandardTypedData?) -> UIImage? {
+  guard let data = data else { return nil }
+  return UIImage(data: data.data)
+}
+
+@available(iOS 14.0, *)
+func loadUIImage(
+  from imagePath: String,
+  bytes imageData: FlutterStandardTypedData?,
+  tint imageTint: FCPImageTint? = nil,
+  completion: @escaping (UIImage) -> Void
+) {
+  let cacheKey = makeTintedImageCacheKey(imagePath: imagePath, imageData: imageData, tint: imageTint)
+  if let cacheKey = cacheKey,
+    let cachedImage = fcpTintedImageCache.object(forKey: cacheKey as NSString)
+  {
+    completion(cachedImage)
+    return
+  }
+
+  func complete(_ image: UIImage) {
+    let result = image.applyingImageTint(imageTint)
+    if let cacheKey = cacheKey {
+      fcpTintedImageCache.setObject(result, forKey: cacheKey as NSString)
+    }
+    completion(result)
+  }
+
+  if let bytesImage = makeUIImage(fromBytes: imageData) {
+    complete(bytesImage)
+    return
+  }
+
+  loadUIImageAsync(from: imagePath.toImageSource()) { uiImage in
+    if let uiImage = uiImage {
+      complete(uiImage)
+    }
+  }
+}
+
+private func makeTintedImageCacheKey(
+  imagePath: String,
+  imageData: FlutterStandardTypedData?,
+  tint imageTint: FCPImageTint?
+) -> String? {
+  guard let imageTint = imageTint else { return nil }
+  let bytesKey = imageData.map { "\($0.data.count):\($0.data.hashValue)" } ?? "nil"
+  return [imagePath, bytesKey, imageTint.cacheKey].joined(separator: "|")
+}
 
 // Image Source (no UIImage creation here)
 enum ImageSource {
-    case url(URL)
-    case file(String)
-    case flutterAsset(String)
+  case url(URL)
+  case file(String)
+  case flutterAsset(String)
 }
 
 // String → ImageSource
 extension String {
-    func toImageSource() -> ImageSource {
-        if self.starts(with: "http") {
-            return .url(URL(string: self)!)
-        } else if self.starts(with: "file://") {
-            return .file(self.replacingOccurrences(of: "file://", with: ""))
-        } else {
-            return .flutterAsset(self)
-        }
+  func toImageSource() -> ImageSource {
+    if self.starts(with: "http") {
+      return .url(URL(string: self)!)
+    } else if self.starts(with: "file://") {
+      return .file(self.replacingOccurrences(of: "file://", with: ""))
+    } else {
+      return .flutterAsset(self)
     }
+  }
 }
 
 func makeSafeUIPlaceholder() -> UIImage {
@@ -38,85 +95,249 @@ func makeSafeUIPlaceholder() -> UIImage {
 }
 
 func makeUIPlaceholder() -> UIImage {
-  UIGraphicsBeginImageContextWithOptions(CGSize(width: 100, height: 100), false, 0)
-  let img = UIGraphicsGetImageFromCurrentImageContext()!
-  UIGraphicsEndImageContext()
-  return img
+  let size = CGSize(width: 100, height: 100)
+  let renderer = UIGraphicsImageRenderer(size: size)
+  return renderer.image { _ in
+    UIColor.clear.setFill()
+    UIRectFill(CGRect(origin: .zero, size: size))
+  }
 }
 
 // UIImage creation (MAIN THREAD ONLY)
 @available(iOS 14.0, *)
-func makeUIImage(from source: ImageSource) -> UIImage {
+func makeUIImage(
+  from source: ImageSource,
+  errorCallback: ((Error) -> Void)? = nil
+) -> UIImage {
+  do {
     switch source {
     case .url(let url):
-        let data = try? Data(contentsOf: url) // Synchronous URL loading (kept for compatibility but avoid using on main thread)
-        return data.flatMap { UIImage(data: $0) } ?? UIImage(systemName: "questionmark")!
+      let data = try Data(contentsOf: url)
+      if let image = UIImage(data: data) {
+        return image
+      } else {
+        throw NSError(
+          domain: "ImageLoadError", code: 0,
+          userInfo: [NSLocalizedDescriptionKey: "Invalid image data"])
+      }
 
     case .file(let path):
-        return UIImage(contentsOfFile: path) ?? UIImage(systemName: "questionmark")!
+      if let image = UIImage(contentsOfFile: path) {
+        return image
+      } else {
+        throw NSError(
+          domain: "ImageLoadError", code: 1,
+          userInfo: [NSLocalizedDescriptionKey: "File not found or invalid"])
+      }
 
     case .flutterAsset(let name):
-        let key = SwiftFlutterCarplayPlugin.registrar!.lookupKey(forAsset: name)
-        return UIImage(imageLiteralResourceName: key)
+      guard !name.isEmpty else {
+        throw NSError(
+          domain: "ImageLoadError", code: 2,
+          userInfo: [NSLocalizedDescriptionKey: "Asset name cannot be empty"])
+      }
+      let key = SwiftFlutterCarplayPlugin.registrar!.lookupKey(forAsset: name)
+      guard let path = Bundle.main.path(forResource: key, ofType: nil) else {
+        throw NSError(
+          domain: "ImageLoadError", code: 3,
+          userInfo: [NSLocalizedDescriptionKey: "Asset not found in bundle"])
+      }
+      guard let image = UIImage(contentsOfFile: path) else {
+        throw NSError(
+          domain: "ImageLoadError", code: 4,
+          userInfo: [NSLocalizedDescriptionKey: "Failed to decode image at path: \(path)"])
+      }
+      return image
     }
+  } catch {
+    errorCallback?(error)
+    return makeUIPlaceholder()
+  }
 }
 
 // Asynchronous image loader. Always calls completion on main thread.
 @available(iOS 14.0, *)
-func loadUIImageAsync(from source: ImageSource, completion: @escaping (UIImage?) -> Void) {
-    switch source {
-    case .url(let url):
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            var image: UIImage? = nil
-            if let data = data {
-                image = UIImage(data: data)
-            }
-            if let image = image {
-                DispatchQueue.main.async { completion(image) }
-            } else {
-                DispatchQueue.main.async { completion(UIImage(systemName: "questionmark")) }
-            }
+func loadUIImageAsync(
+  from source: ImageSource,
+  completion: @escaping (UIImage?) -> Void,
+  errorCallback: ((Error) -> Void)? = nil
+) {
+  switch source {
+  case .url(let url):
+    let task = URLSession.shared.dataTask(with: url) { data, response, error in
+      do {
+        if let error = error { throw error }
+        guard let data = data, let image = UIImage(data: data) else {
+          throw NSError(
+            domain: "ImageLoadError", code: 0,
+            userInfo: [NSLocalizedDescriptionKey: "Invalid image data"])
         }
-        task.resume()
-
-    case .file(let path):
-        DispatchQueue.global(qos: .userInitiated).async {
-            let image = UIImage(contentsOfFile: path) ?? UIImage(systemName: "questionmark")
-            DispatchQueue.main.async { completion(image) }
-        }
-
-    case .flutterAsset(let name):
+        DispatchQueue.main.async { completion(image) }
+      } catch {
         DispatchQueue.main.async {
-            let key = SwiftFlutterCarplayPlugin.registrar!.lookupKey(forAsset: name)
-            let image = UIImage(imageLiteralResourceName: key)
-            completion(image)
+          errorCallback?(error)
+          completion(makeUIPlaceholder())
         }
+      }
     }
+    task.resume()
+
+  case .file(let path):
+    DispatchQueue.global(qos: .userInitiated).async {
+      do {
+        guard let image = UIImage(contentsOfFile: path) else {
+          throw NSError(
+            domain: "ImageLoadError", code: 1,
+            userInfo: [NSLocalizedDescriptionKey: "File not found or invalid"])
+        }
+        DispatchQueue.main.async { completion(image) }
+      } catch {
+        DispatchQueue.main.async {
+          errorCallback?(error)
+          completion(makeUIPlaceholder())
+        }
+      }
+    }
+
+  case .flutterAsset(let name):
+    DispatchQueue.main.async {
+      do {
+        guard !name.isEmpty else {
+          throw NSError(
+            domain: "ImageLoadError", code: 2,
+            userInfo: [NSLocalizedDescriptionKey: "Asset name cannot be empty"])
+        }
+        let key = SwiftFlutterCarplayPlugin.registrar!.lookupKey(forAsset: name)
+        guard let path = Bundle.main.path(forResource: key, ofType: nil) else {
+          throw NSError(
+            domain: "ImageLoadError", code: 3,
+            userInfo: [NSLocalizedDescriptionKey: "Asset not found in bundle"])
+        }
+        guard let image = UIImage(contentsOfFile: path) else {
+          throw NSError(
+            domain: "ImageLoadError", code: 4,
+            userInfo: [NSLocalizedDescriptionKey: "Failed to decode image at path: \(path)"])
+        }
+        completion(image)
+      } catch {
+        errorCallback?(error)
+        completion(makeUIPlaceholder())
+      }
+    }
+  }
 }
 
 //  UIImage utilities (safe, UI only)
 extension UIImage {
-    func resizeImageTo(size: CGSize) -> UIImage {
-        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
-        draw(in: CGRect(origin: .zero, size: size))
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()!
-        UIGraphicsEndImageContext()
-        return newImage
+  func resizeImageTo(size: CGSize) -> UIImage {
+    let renderer = UIGraphicsImageRenderer(size: size)
+    return renderer.image { _ in
+      draw(in: CGRect(origin: .zero, size: size))
     }
+  }
+
+  func applyingImageTint(_ tint: FCPImageTint?) -> UIImage {
+    guard let tint = tint else { return self }
+
+    let lightTrait = UITraitCollection(userInterfaceStyle: .light)
+    let darkTrait = UITraitCollection(userInterfaceStyle: .dark)
+    let lightImage = tintedGlyph(
+      with: tint.color(for: .light).resolvedColor(with: lightTrait),
+      selectedSafe: tint.selectedSafe
+    )
+    let darkImage = tintedGlyph(
+      with: tint.color(for: .dark).resolvedColor(with: darkTrait),
+      selectedSafe: tint.selectedSafe
+    )
+
+    let imageAsset = UIImageAsset()
+    imageAsset.register(lightImage, with: lightTrait)
+    imageAsset.register(darkImage, with: darkTrait)
+    return imageAsset.image(with: UITraitCollection.current).withRenderingMode(.alwaysOriginal)
+  }
+
+  private func tintedGlyph(with color: UIColor, selectedSafe: Bool) -> UIImage {
+    let format = UIGraphicsImageRendererFormat()
+    format.scale = scale
+    format.opaque = false
+
+    let renderer = UIGraphicsImageRenderer(size: size, format: format)
+    let rect = CGRect(origin: .zero, size: size)
+    let glyph = renderer.image { _ in
+      color.setFill()
+      UIRectFill(rect)
+      draw(in: rect, blendMode: .destinationIn, alpha: 1)
+    }.withRenderingMode(.alwaysOriginal)
+
+    guard selectedSafe else { return glyph }
+
+    return renderer.image { context in
+      let shadowColor = contrastColor(for: color).cgColor
+      let blur = max(1, min(size.width, size.height) * 0.06)
+      context.cgContext.setShadow(offset: .zero, blur: blur, color: shadowColor)
+      glyph.draw(in: rect)
+      context.cgContext.setShadow(offset: .zero, blur: 0, color: nil)
+      glyph.draw(in: rect)
+    }.withRenderingMode(.alwaysOriginal)
+  }
+
+  private func contrastColor(for color: UIColor) -> UIColor {
+    var red: CGFloat = 0
+    var green: CGFloat = 0
+    var blue: CGFloat = 0
+    var alpha: CGFloat = 0
+    color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+
+    let luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
+    if luminance > 0.55 {
+      return UIColor.black.withAlphaComponent(0.85)
+    }
+    return UIColor.white.withAlphaComponent(0.95)
+  }
+}
+
+/// Resolve a tab icon from [systemIcon]:
+/// 1. Named SF Symbol (ex: "star") → `UIImage(systemName:)`
+/// 2. Image source (URL, file, Flutter asset) → loaded via `makeUIImage` /
+///    `loadUIImageAsync`, using a placeholder on iOS 26+ while loading async.
+///
+/// The [applyImage] closure is called once with the resolved image so that
+/// the caller can assign it to the appropriate template property.
+@available(iOS 14.0, *)
+func resolveTabIcon(
+  _ systemIcon: String,
+  applyImage: @escaping (UIImage?) -> Void
+) {
+  // 1. SF Symbol — resolved synchronously
+  if let sysImage = UIImage(systemName: systemIcon) {
+    applyImage(sysImage)
+    return
+  }
+
+  // 2. Image source (URL, file, asset)
+  let imageSource = systemIcon.toImageSource()
+  if #available(iOS 26.0, *) {
+    applyImage(makeSafeUIPlaceholder())
+    loadUIImageAsync(from: imageSource) { uiImage in
+      applyImage(uiImage)
+    }
+  } else {
+    applyImage(makeUIImage(from: imageSource))
+  }
 }
 
 // Regex helper
 extension String {
-    func match(_ regex: String) -> [[String]] {
-        let nsString = self as NSString
-        return (try? NSRegularExpression(pattern: regex))?
-            .matches(in: self, range: NSRange(location: 0, length: nsString.length))
-            .map { match in
-                (0..<match.numberOfRanges).map {
-                    match.range(at: $0).location == NSNotFound
-                    ? ""
-                    : nsString.substring(with: match.range(at: $0))
-                }
-            } ?? []
-    }
+  func match(_ regex: String) -> [[String]] {
+    let nsString = self as NSString
+    return (try? NSRegularExpression(pattern: regex))?
+      .matches(in: self, range: NSRange(location: 0, length: nsString.length))
+      .map { match in
+        (0..<match.numberOfRanges).map {
+          match.range(at: $0).location == NSNotFound
+            ? ""
+            : nsString.substring(with: match.range(at: $0))
+        }
+      } ?? []
+  }
 }
