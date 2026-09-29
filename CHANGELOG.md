@@ -1,5 +1,10 @@
 ## Next
 
+## 1.5.1
+
+- **CarPlay cold start:** the last connection status is now replayed when Dart starts listening. Previously a CarPlay-only cold launch connected the scene before Dart subscribed, so `FlutterCarplay.connectionStatus` stayed `unknown` and connection listeners never fired.
+- **Malformed image URLs:** `String.toImageSource()` no longer force-unwraps `URL(string:)`. On iOS 16, unencoded characters (spaces, non-ASCII) in a cover URL made `URL(string:)` return `nil` and crash the host app; it now retries with percent-encoding and falls back to a blank placeholder image instead of crashing.
+
 ## 1.5.0
 
 Merge upstream `oguzhnatly/flutter_carplay` v1.5.0 into the fork. This adopts all upstream changes from upstream 1.2.11 through 1.5.0 (entries below), including:

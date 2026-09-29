@@ -11,6 +11,14 @@ import Flutter
 class FCPStreamHandlerPlugin: NSObject, FlutterStreamHandler {
   private static var eventSink: FlutterEventSink?
 
+  /// The most recent CarPlay connection status, kept for late listeners.
+  ///
+  /// CarPlay can launch the app with only its own scene connected. The scene
+  /// connects before Dart subscribes to this channel, so the `connected` event
+  /// would be dropped and Dart would never learn that CarPlay is up. It is
+  /// replayed from `onListen` instead.
+  private static var lastConnectionStatus: String?
+
   public required init(registrar: FlutterPluginRegistrar) {
     super.init()
     let eventChannel = FlutterEventChannel(
@@ -25,6 +33,10 @@ class FCPStreamHandlerPlugin: NSObject, FlutterStreamHandler {
     eventSink: @escaping FlutterEventSink
   ) -> FlutterError? {
     FCPStreamHandlerPlugin.eventSink = eventSink
+    if let status = FCPStreamHandlerPlugin.lastConnectionStatus {
+      FCPStreamHandlerPlugin.sendEvent(
+        type: FCPChannelTypes.onCarplayConnectionChange, data: ["status": status])
+    }
     return nil
   }
 
@@ -34,6 +46,10 @@ class FCPStreamHandlerPlugin: NSObject, FlutterStreamHandler {
   }
 
   public static func sendEvent(type: String, data: [String: Any]) {
+    if type == FCPChannelTypes.onCarplayConnectionChange, let status = data["status"] as? String {
+      lastConnectionStatus = status
+    }
+
     guard let eventSink = FCPStreamHandlerPlugin.eventSink else {
       return
     }
