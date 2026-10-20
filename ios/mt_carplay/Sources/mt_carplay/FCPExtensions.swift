@@ -104,7 +104,15 @@ enum ImageSource {
 extension String {
   func toImageSource() -> ImageSource {
     if self.starts(with: "http") {
-      return .url(URL(string: self)!)
+      // URL(string:) returns nil on iOS 16 for unencoded characters; retry
+      // with percent-encoding, and fall back to a placeholder asset rather
+      // than crash the host app over one bad image URL.
+      if let url = URL(string: self)
+        ?? self.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed).flatMap(URL.init(string:))
+      {
+        return .url(url)
+      }
+      return .flutterAsset("")
     } else if self.starts(with: "file://") {
       return .file(self.replacingOccurrences(of: "file://", with: ""))
     } else {
