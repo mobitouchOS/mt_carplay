@@ -1,4 +1,8 @@
 enum FCPChannelTypes {
+  setVoiceControlTemplate,
+  activateVoiceControlState,
+  onVoiceControlDismissed,
+  onVoiceControlButtonPressed,
   onCarplayConnectionChange,
   setRootTemplate,
   forceUpdateRootTemplate,
@@ -19,6 +23,7 @@ enum FCPChannelTypes {
   pushTemplate,
   showNowPlaying,
   onGridButtonPressed,
+  onGridButtonPressedComplete,
   setActionSheet,
   onBarButtonPressed,
   onTextButtonPressed,
@@ -36,6 +41,8 @@ enum FCPChannelTypes {
   onSearchButtonPressed,
   updateSearchResults,
   onSearchResultSelectedComplete,
+  setNowPlayingUpNextButton,
+  onNowPlayingUpNextButtonPressed,
 }
 
 enum FAAChannelTypes {

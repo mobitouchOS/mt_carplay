@@ -1,4 +1,90 @@
-## Next
+## 1.7.1 - 2026-10-20
+
+Merge upstream `oguzhnatly/flutter_carplay` v1.7.1 into the fork. This adopts all upstream changes from 1.5.1 through 1.7.1 (entries below; their issue numbers refer to the upstream repository) and adds the fork changes listed first.
+
+**Requires Flutter 3.44 and Dart 3.12 or newer**, raised upstream in 1.6.6.
+
+Fork changes:
+
+- **Now Playing Up Next button:** `FlutterCarplay.setNowPlayingUpNextButton` shows or hides the Up Next button in the top-right corner of the shared Now Playing template and sets its label. Taps reach the listener set with `addListenerOnNowPlayingUpNext`, so the app can push its own queue list.
+- **Malformed image URLs:** `String.toImageSource()` no longer force-unwraps `URL(string:)`. On iOS 16, unencoded characters (spaces, non-ASCII) in a cover URL made `URL(string:)` return `nil` and crash the host app; it now retries with percent-encoding and falls back to a blank placeholder image.
+- **CarPlay cold start:** a CarPlay-only cold launch no longer leaves `FlutterCarplay.connectionStatus` at `unknown` with connection listeners never called. The last connection status is replayed when Dart starts listening, using upstream's fix from 1.7.0.
+- **Swift Package Manager:** the fork keeps its own SwiftPM layout (`ios/mt_carplay/Sources/mt_carplay`) and Swift registration shim, so upstream's SwiftPM support (1.6.0, 1.6.1) needs no changes in apps already on `mt_carplay`. `Package.swift` now links CarPlay, UIKit and AVFoundation explicitly.
+- **Documentation:** the README, contribution guide, security policy and new licensing guide follow upstream's 1.7.0+1 rewrite, with links to this repository and a credit to the original project.
+
+Upstream 1.7.1 (2026-10-06):
+
+* Size CarPlay artwork against the car display and native image slots, preserve original colors, and support global and per-image size overrides (#136).
+* Restore grid button callbacks inside CarPlay tabs and add optional loading feedback without breaking existing zero argument callbacks (#137).
+* Clarify bundled custom SVG icons and require Car App API level 8 for the media example (#130, #131).
+* Complete cancelled Android Auto method calls when the Flutter engine detaches, while retaining native exception reporting (#133).
+* Ignore stale CarPlay artwork after overlapping size, tint and source updates, including changed image bytes for the same path.
+
+## 1.7.0+2 - 2026-10-05
+
+* Fix the mobile README banner and dark appearance Android Auto wordmark on pub.dev.
+* Use immutable HTTPS links for README images, including responsive picture sources that pub.dev does not rewrite.
+* Preserve the existing artwork, original resolution and lossless WebP quality. Package APIs and native behavior are unchanged.
+
+## 1.7.0+1 - 2026-10-05
+
+* Rewrite the README with a clearer introduction, platform setup, native template catalogue and expandable examples.
+* Submit Android roots in the README example after the car connects and clarify when tabs and raster artwork need a live car context.
+* Add dashboard banners and original CarPlay and Android Auto branding, used selectively across the documentation.
+* Use lossless WebP images at their original resolution to reduce documentation download sizes.
+* Refresh contribution and security reporting guidance, and add an MIT licensing guide without changing the legal terms.
+* Update the package description. Dart APIs, native behavior and dependencies are unchanged.
+
+## 1.7.0 - 2026-10-04
+
+* Add modal CarPlay voice control states, activation and dismissal callbacks (#140, #2).
+* Support iOS 26.4 voice action buttons and navigation buttons with availability checks.
+* Validate state and button limits, wait for images, and handle modal cancellation and disconnect.
+* Add an optional speech recognition and TTS example with a separate conversational entry point and entitlement file.
+* Document category restrictions, rate limiting, audio ownership and contribution standards.
+
+## 1.6.6 - 2026-09-30
+
+- Migrate the Android plugin to Flutter's built-in Kotlin so it no longer applies the Kotlin Gradle Plugin, which clears the KGP warning and keeps AGP 9 builds with `android.builtInKotlin=true` working (#138, #139) (ty @pierrejean75)
+- Raise the minimum supported versions to Flutter 3.44 and Dart 3.12, as required by the built-in Kotlin migration (#139)
+- Update the example app Android toolchain to Gradle 8.14, AGP 8.11.1 and Kotlin 2.2.20 (#139)
+
+## 1.6.5 - 2026-08-21
+
+- Fix Android Auto list template startup by validating selectable lists before they reach the host (#120) (ty @JulianBissekkou)
+- Complete Android Auto method-channel calls when coroutine handlers throw (#133, #134) (ty @JulianBissekkou)
+- Restore the README star history chart (#135)
+
+## 1.6.4 - 2026-07-06
+
+- Move the Android Auto message template docs into the Android Auto API usage section (#129) (ty @EArminjon)
+
+## 1.6.3 - 2026-06-22
+
+- Fix Android Auto example release launches by allowing root template refresh before the car screen is attached (#127, #128) (ty @deandreamatias)
+- Keep the Android Auto selectable list demo in its own template so it follows host validation rules (#128)
+
+## 1.6.2 - 2026-06-16
+
+- Support setting `CPSearchTemplate` as the CarPlay root template.
+- Add a Search Template row to the example app and a README preview image.
+- Document CarPlay entitlement options while keeping parking as the example default for Point of Interest support.
+
+## 1.6.1 - 2026-06-15
+
+- Fix Swift Package Manager builds by keeping `FCPSearchTemplate.swift` inside the SwiftPM source path (#123, #124) (ty @Gabriellsp)
+- Reject unsupported `CPSearchTemplate` root templates before CarPlay receives an invalid root template.
+
+## 1.6.0 - 2026-06-13
+
+- Add Swift Package Manager support for iOS package consumers (#111) (ty @justinbeatz)
+- Keep `FCPImageTint.swift` in the SwiftPM source path and align CocoaPods source files with the new package layout (#111) (ty @justinbeatz)
+
+- **Now Playing Up Next button:** `FlutterCarplay.setNowPlayingUpNextButton` shows or hides the Up Next button in the top-right corner of the shared Now Playing template and sets its label. Taps reach the listener set with `addListenerOnNowPlayingUpNext`, so the app can push its own queue list.
+
+## 1.5.1
+
+- Fix CarPlay tab templates when the same list item ID appears in multiple tabs (#121) (ty @Gabriellsp)
 
 ## 1.5.0
 

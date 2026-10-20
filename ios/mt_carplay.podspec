@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'mt_carplay'
-  s.version          = '1.2.13'
+  s.version          = '1.7.1'
   s.summary          = 'Flutter Apps are now on Apple CarPlay.'
   s.description      = <<-DESC
 Flutter Apps are now on Apple CarPlay. This package aims to make it safe to use iPhone apps made with Flutter in the car by integrating with CarPlay.
