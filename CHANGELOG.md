@@ -1,7 +1,19 @@
-## 1.7.1 - 2026-10-06
+## 1.7.1 - 2026-10-20
 
-* Restore the README star history chart and add a GitHub Sponsors badge above it.
-* Show contributor avatars beneath the chart at their natural size instead of listing individual contributors in prose.
+Merge upstream `oguzhnatly/flutter_carplay` v1.7.1 into the fork. This adopts all upstream changes from 1.5.1 through 1.7.1 (entries below; their issue numbers refer to the upstream repository) and adds the fork changes listed first.
+
+**Requires Flutter 3.44 and Dart 3.12 or newer**, raised upstream in 1.6.6.
+
+Fork changes:
+
+- **Now Playing Up Next button:** `FlutterCarplay.setNowPlayingUpNextButton` shows or hides the Up Next button in the top-right corner of the shared Now Playing template and sets its label. Taps reach the listener set with `addListenerOnNowPlayingUpNext`, so the app can push its own queue list.
+- **Malformed image URLs:** `String.toImageSource()` no longer force-unwraps `URL(string:)`. On iOS 16, unencoded characters (spaces, non-ASCII) in a cover URL made `URL(string:)` return `nil` and crash the host app; it now retries with percent-encoding and falls back to a blank placeholder image.
+- **CarPlay cold start:** a CarPlay-only cold launch no longer leaves `FlutterCarplay.connectionStatus` at `unknown` with connection listeners never called. The last connection status is replayed when Dart starts listening, using upstream's fix from 1.7.0.
+- **Swift Package Manager:** the fork keeps its own SwiftPM layout (`ios/mt_carplay/Sources/mt_carplay`) and Swift registration shim, so upstream's SwiftPM support (1.6.0, 1.6.1) needs no changes in apps already on `mt_carplay`. `Package.swift` now links CarPlay, UIKit and AVFoundation explicitly.
+- **Documentation:** the README, contribution guide, security policy and new licensing guide follow upstream's 1.7.0+1 rewrite, with links to this repository and a credit to the original project.
+
+Upstream 1.7.1 (2026-10-06):
+
 * Size CarPlay artwork against the car display and native image slots, preserve original colors, and support global and per-image size overrides (#136).
 * Restore grid button callbacks inside CarPlay tabs and add optional loading feedback without breaking existing zero argument callbacks (#137).
 * Clarify bundled custom SVG icons and require Car App API level 8 for the media example (#130, #131).
