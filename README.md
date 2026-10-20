@@ -557,6 +557,7 @@ A returned `true` means what that particular operation reports, not that every a
 | `activateVoiceControlState(elementId:, identifier:)` | `Future<bool>` | Activate a state on the current voice modal |
 | `popModal(animated:)` | `Future<bool>` | Dismiss a modal, or cancel one that is still being prepared |
 | `showSharedNowPlaying(animated:)` | `Future<bool>` | Push the system's shared Now Playing instance if it is not already in the stack |
+| `setNowPlayingUpNextButton(enabled:, title:)` | `Future<bool>` | Show or hide the shared Now Playing template's Up Next button and set its label |
 
 The following are **instance** methods on `FlutterCarplay`:
 
@@ -567,6 +568,7 @@ The following are **instance** methods on `FlutterCarplay`:
 | `updateInformationTemplateItems(elementId:, items:)` | `Future<void>` | Replace a known information template's items |
 | `updateInformationTemplateActions(elementId:, actions:)` | `Future<void>` | Replace its text actions |
 | `updateTabBarTemplates(elementId:, templates:)` | `Future<void>` | Update a known tab bar's children without resetting the root |
+| `addListenerOnNowPlayingUpNext(onPressed)` | `void` | Receive taps on the shared Now Playing template's Up Next button; `removeListenerOnNowPlayingUpNext()` stops them |
 
 `setRootTemplate` already requests a native root update, and the CarPlay scene installs the retained root when it connects. `forceUpdateRootTemplate` is available for an explicit refresh; it is not a compulsory second call after every setter. Avoid resetting the root repeatedly during modal presentation or connection callbacks.
 
@@ -1268,6 +1270,26 @@ Future<bool> openCarPlayNowPlaying() =>
 </details>
 
 Repeated calls do not push duplicate shared instances. A `false` result can mean it is already in the stack, not only an error. The method does not create a player or start playback.
+
+`FlutterCarplay.setNowPlayingUpNextButton` shows the Up Next button in the top-right corner of the same shared screen, whether your app pushed it or CarPlay opened it from its own Now Playing button. CarPlay only draws the button: listen for taps with `addListenerOnNowPlayingUpNext` and present the queue yourself, typically by pushing a `CPListTemplate`. A `null` title keeps the current label, which is the system's localized "Up Next" until you set one. Hide the button while nothing is queued so it never opens an empty list.
+
+<details>
+<summary>Show your queue from Up Next</summary>
+
+```dart
+import 'package:mt_carplay/mt_carplay.dart';
+
+final carplay = FlutterCarplay();
+
+Future<void> offerQueue(CPListTemplate Function() buildQueue) async {
+  await FlutterCarplay.setNowPlayingUpNextButton(enabled: true, title: 'Queue');
+  carplay.addListenerOnNowPlayingUpNext(
+    () => FlutterCarplay.push(template: buildQueue()),
+  );
+}
+```
+
+</details>
 
 ### Android Auto templates
 
