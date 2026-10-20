@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:uuid/uuid.dart';
 
 import '../../controllers/carplay_controller.dart';
+import '../common/image_size.dart';
 import '../common/image_tint.dart';
 import 'list_image_row_item/list_image_row_item_element.dart';
 import 'list_template_item.dart';
@@ -25,6 +26,10 @@ class CPListImageRowItem extends CPListTemplateItem {
   /// Optional tints for [gridImages], aligned by index.
   final List<AutoImageTint?>? gridImageTints;
 
+  /// Optional sizes for [gridImages], aligned by index. Entries left `null`
+  /// fall back to `FlutterCarplay.iconSize`.
+  final List<AutoImageSize?>? gridImageSizes;
+
   /// The titles displayed for each image in this image row item.
   /// iOS 14.0–26.0 | iPadOS 14.0–26.0 | Mac Catalyst 14.0–26.0'
   final List<String>? imageTitles;
@@ -46,18 +51,23 @@ class CPListImageRowItem extends CPListTemplateItem {
   /// An optional closure that CarPlay invokes when the user selects the list item.
   /// iOS 14.0+ | iPadOS 14.0+ | Mac Catalyst 14.0+
   FutureOr<void> Function(Function() complete, CPListImageRowItem self)?
-      onPress;
+  onPress;
 
   /// An optional closure that CarPlay invokes when the user selects an image.
   /// iOS 14.0+ | iPadOS 14.0+ | Mac Catalyst 14.0+
   FutureOr<void> Function(
-      Function() complete, CPListImageRowItem self, int? index)? onItemPress;
+    Function() complete,
+    CPListImageRowItem self,
+    int? index,
+  )?
+  onItemPress;
 
   /// Creates [CPListImageRowItem]
   CPListImageRowItem({
     super.text,
     this.gridImages,
     this.gridImageTints,
+    this.gridImageSizes,
     this.imageTitles,
     this.elements,
     this.allowsMultipleLines = false,
@@ -68,18 +78,18 @@ class CPListImageRowItem extends CPListTemplateItem {
 
   @override
   Map<String, dynamic> toJson() => {
-        '_elementId': _elementId,
-        'text': text,
-        'gridImages': gridImages,
-        'gridImageTints':
-            gridImageTints?.map((tint) => tint?.toJson()).toList(),
-        'imageTitles': imageTitles,
-        'elements': elements?.map((e) => e.toJson()).toList(),
-        'allowsMultipleLines': allowsMultipleLines,
-        'onPress': onPress != null ? true : false,
-        'onItemPress': onItemPress != null ? true : false,
-        'runtimeType': 'FCPListImageRowItem',
-      };
+    '_elementId': _elementId,
+    'text': text,
+    'gridImages': gridImages,
+    'gridImageTints': gridImageTints?.map((tint) => tint?.toJson()).toList(),
+    'gridImageSizes': gridImageSizes?.map((size) => size?.toJson()).toList(),
+    'imageTitles': imageTitles,
+    'elements': elements?.map((e) => e.toJson()).toList(),
+    'allowsMultipleLines': allowsMultipleLines,
+    'onPress': onPress != null ? true : false,
+    'onItemPress': onItemPress != null ? true : false,
+    'runtimeType': 'FCPListImageRowItem',
+  };
 
   void setText(String text) {
     this.text = text;

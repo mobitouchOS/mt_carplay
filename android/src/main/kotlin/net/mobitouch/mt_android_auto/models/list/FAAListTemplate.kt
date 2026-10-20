@@ -6,6 +6,14 @@ data class FAAListTemplate(
     val sections: List<FAAListSection>,
     val emptyViewTitleVariants: List<String>,
 ) {
+    init {
+        val hasSelectableList = sections.any { it.isSelectable }
+        val isSingleUntitledList = sections.size == 1 && sections.first().title.isEmpty()
+        require(!hasSelectableList || isSingleUntitledList) {
+            "A selectable AAListSection must be the only section in an AAListTemplate and must not have a title."
+        }
+    }
+
     companion object {
         fun fromJson(map: Map<String, Any?>): FAAListTemplate {
             val elementId = map["_elementId"] as? String ?: ""

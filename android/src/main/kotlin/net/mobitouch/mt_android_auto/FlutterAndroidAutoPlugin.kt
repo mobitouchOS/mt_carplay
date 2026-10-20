@@ -35,7 +35,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
-    private val pluginScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private var pluginScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     lateinit var channel: MethodChannel
     lateinit var eventChannel: EventChannel
@@ -70,6 +70,9 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
     }
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        if (pluginScope.coroutineContext[kotlinx.coroutines.Job]?.isActive != true) {
+            pluginScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+        }
         channel = MethodChannel(
             flutterPluginBinding.binaryMessenger,
             FAAHelpers.makeFCPChannelId("")
@@ -103,17 +106,15 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                result.error("Error: $e", null, null)
+                result.completeWithError(e)
             }
         }
         eventChannel.setStreamHandler(this)
     }
 
     private fun forceUpdateRootTemplate(call: MethodCall, result: MethodChannel.Result) {
-        currentScreen?.let {
-            it.invalidate()
-            result.success(true)
-        } ?: result.error("No screen found", "You must set a RootTemplate first", null)
+        currentScreen?.invalidate()
+        result.success(true)
     }
 
     private fun popTemplate(call: MethodCall, result: MethodChannel.Result) {
@@ -179,7 +180,7 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
             return
         }
 
-        pluginScope.launch {
+        pluginScope.launchMethodCall(result) {
             val alertTemplate = FAAAlertTemplate.fromJson(data)
             val messageTemplate = buildAlertMessageTemplate(alertTemplate)
 
@@ -206,7 +207,7 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
 
             currentAlertScreen = alertScreen
             carContext.getCarService(ScreenManager::class.java).push(alertScreen)
-            result.success(true)
+            true
         }
     }
 
@@ -256,9 +257,14 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
             result.error("Missing template", "template argument is required", null)
             return
         }
+        val tabBarTemplate = try {
+            FAATabBarTemplate.fromJson(data)
+        } catch (e: IllegalArgumentException) {
+            result.error("Invalid template", e.message, null)
+            return
+        }
 
-        pluginScope.launch {
-            val tabBarTemplate = FAATabBarTemplate.fromJson(data)
+        pluginScope.launchMethodCall(result) {
             currentTabBarData = tabBarTemplate
             storeTemplateData(tabBarTemplate.elementId, "FAATabBarTemplate", data, false, currentScreen)
             storeTabData(tabBarTemplate)
@@ -267,7 +273,7 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
             }
             currentTemplate = buildNativeTabTemplate(tabBarTemplate)
             currentScreen?.invalidate()
-            result.success(true)
+            true
         }
     }
 
@@ -277,6 +283,17 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
         val data = templateDataByElementId[elementId]
         if (data == null) {
             result.error("No template found", "AAListTemplate not found with elementId: $elementId", null)
+            return
+        }
+        val parsedSections = sections.map { FAAListSection.fromJson(it) }
+        val hasSelectableList = parsedSections.any { it.isSelectable }
+        val isSingleUntitledList = parsedSections.size == 1 && parsedSections.first().title.isEmpty()
+        if (hasSelectableList && !isSingleUntitledList) {
+            result.error(
+                "Invalid template",
+                "A selectable AAListSection must be the only section in an AAListTemplate and must not have a title.",
+                null,
+            )
             return
         }
 
@@ -344,7 +361,7 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
         }
         val elementId = data["_elementId"] as? String ?: ""
 
-        pluginScope.launch {
+        pluginScope.launchMethodCall(result) {
             val newScreen = object : Screen(carContext) {
                 override fun onGetTemplate(): Template = templatesByElementId[elementId]
                     ?: getTemplateBlocking(runtimeType, data, true, this)
@@ -364,13 +381,12 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
                 }
             }
 
-            val template = buildTemplateForType(runtimeType, data, true, newScreen, result)
-            if (template == null) return@launch
+            val template = buildTemplateForType(runtimeType, data, true, newScreen)
 
             storeTemplateData(elementId, runtimeType, data, true, newScreen)
             templatesByElementId[elementId] = template
             carContext.getCarService(ScreenManager::class.java).push(newScreen)
-            result.success(true)
+            true
         }
     }
 
@@ -383,16 +399,15 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
         }
         val elementId = data["_elementId"] as? String ?: ""
 
-        pluginScope.launch {
-            val template = buildTemplateForType(runtimeType, data, false, currentScreen, result)
-            if (template == null) return@launch
+        pluginScope.launchMethodCall(result) {
+            val template = buildTemplateForType(runtimeType, data, false, currentScreen)
 
             currentRootTemplateElementId = elementId
             currentTemplate = template
             storeTemplateData(elementId, runtimeType, data, false, currentScreen)
             templatesByElementId[elementId] = template
             currentScreen?.invalidate()
-            result.success(true)
+            true
         }
     }
 
@@ -404,7 +419,7 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
             return
         }
 
-        pluginScope.launch {
+        pluginScope.launchMethodCall(result) {
             val template = if (currentTabBarData != null && currentTabBarData!!.tabs.any { it.elementId == elementId }) {
                 buildNativeTabTemplate(currentTabBarData!!)
             } else {
@@ -413,10 +428,8 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
                     data,
                     templateBackButtons[elementId] ?: true,
                     screensByElementId[elementId],
-                    result,
                 )
             }
-            if (template == null) return@launch
 
             if (currentTabBarData != null && currentTabBarData!!.tabs.any { it.elementId == elementId }) {
                 currentTemplate = template
@@ -430,7 +443,7 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
                     screensByElementId[elementId]?.invalidate()
                 }
             }
-            result.success(true)
+            true
         }
     }
 
@@ -467,9 +480,9 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
         data: Map<String, Any?>,
         addBackButton: Boolean,
         owningScreen: Screen?,
+        loadingButtonId: String? = null,
     ): Template = kotlinx.coroutines.runBlocking {
-        buildTemplateForType(runtimeType, data, addBackButton, owningScreen, null)
-            ?: ListTemplate.Builder().setLoading(true).build()
+        buildTemplateForType(runtimeType, data, addBackButton, owningScreen, loadingButtonId)
     }
 
     private suspend fun buildTemplateForType(
@@ -477,10 +490,10 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
         data: Map<String, Any?>,
         addBackButton: Boolean = true,
         owningScreen: Screen? = null,
-        result: MethodChannel.Result? = null,
-    ): Template? = when (runtimeType) {
+        loadingButtonId: String? = null,
+    ): Template = when (runtimeType) {
         "FAAListTemplate" -> getListTemplate(data, addBackButton, owningScreen)
-        "FAAGridTemplate" -> getGridTemplate(data, addBackButton, owningScreen)
+        "FAAGridTemplate" -> getGridTemplate(data, addBackButton, owningScreen, loadingButtonId)
         "FAATabBarTemplate" -> {
             val tabBarTemplate = FAATabBarTemplate.fromJson(data)
             currentTabBarData = tabBarTemplate
@@ -493,10 +506,7 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
         "FAAPaneTemplate" -> getPaneTemplate(data, addBackButton)
         "FAAMessageTemplate" -> getMessageTemplate(data, addBackButton)
         "FAALongMessageTemplate" -> getLongMessageTemplate(data, addBackButton)
-        else -> {
-            result?.error("Unsupported template type", "Template type: $runtimeType is not supported", null)
-            null
-        }
+        else -> throw IllegalArgumentException("Template type $runtimeType is not supported")
     }
 
     private suspend fun buildNativeTabTemplate(tabBar: FAATabBarTemplate): Template {
@@ -556,8 +566,9 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
     ): Template {
         val data = templateDataByElementId[tab.elementId] ?: tab.templateData
         val runtimeType = templateRuntimeTypes[tab.elementId] ?: tab.runtimeType
-        return buildTemplateForType(runtimeType, data, addBackButton, currentScreen, null)
-            ?: ListTemplate.Builder().setLoading(true).build()
+        val template = buildTemplateForType(runtimeType, data, addBackButton, currentScreen)
+        templatesByElementId[tab.elementId] = template
+        return template
     }
 
     private fun resolveTabTitle(tab: FAATabBarItem): String {
@@ -567,6 +578,10 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
 
     private suspend fun resolveTabIcon(carContext: CarContext?, tab: FAATabBarItem): CarIcon {
         val data = templateDataByElementId[tab.elementId] ?: tab.templateData
+        // Bytes rasterized on the Flutter side (e.g. Flutter asset SVGs) win,
+        // since the Android asset loader below cannot decode vector assets.
+        makeCarIconFromBytes(data["iconData"] as? ByteArray)?.let { return it }
+
         val iconUrl = data["iconUrl"] as? String ?: tab.iconUrl
         if (carContext != null && !iconUrl.isNullOrBlank()) {
             resolveCarIcon(carContext, null, iconUrl)?.let { return it }
@@ -858,10 +873,17 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
         data: Map<String, Any?>,
         addBackButton: Boolean = true,
         owningScreen: Screen? = null,
+        loadingButtonId: String? = null,
     ): Template {
         val carContext = AndroidAutoService.session?.carContext
         val template = FAAGridTemplate.fromJson(data)
-        val builder = GridTemplate.Builder().setTitle(template.title)
+        val loadingButton = loadingButtonId
+            ?.let { id -> template.buttons.find { it.elementId == id } }
+        // While a button is in its loading state, keep the grid on screen and
+        // surface the button's loadingMessage (if any) as the template title.
+        val builder = GridTemplate.Builder().setTitle(
+            loadingButton?.loadingMessage?.takeIf { it.isNotBlank() } ?: template.title
+        )
         val emptyMessage = template.emptyViewTitleVariants.firstOrNull()
 
         if (template.buttons.isEmpty()) {
@@ -876,7 +898,17 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
             val itemListBuilder = ItemList.Builder()
             for (button in template.buttons) {
                 itemListBuilder.addItem(
-                    createGridItemFromButton(carContext, button, template.elementId, "FAAGridTemplate", owningScreen)
+                    createGridItemFromButton(
+                        carContext,
+                        button,
+                        template.elementId,
+                        "FAAGridTemplate",
+                        owningScreen,
+                        isButtonLoading = loadingButtonId != null && button.elementId == loadingButtonId,
+                        // Suppress click listeners on every cell while one is loading,
+                        // matching the previous full-template loading behaviour.
+                        isClickListenerEnabled = loadingButtonId == null,
+                    )
                 )
             }
             builder.setSingleList(itemListBuilder.build())
@@ -892,7 +924,22 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
         templateElementId: String,
         runtimeType: String,
         owningScreen: Screen?,
+        isButtonLoading: Boolean = false,
+        isClickListenerEnabled: Boolean = true,
     ): GridItem {
+        if (isButtonLoading) {
+            // The tapped cell enters the platform loading state: the host renders
+            // its native clockwise spinner in the image slot (same slot, same
+            // size) until the Dart side calls complete(). Per the Car App
+            // Library contract, a loading grid item must not carry an image or
+            // a click listener — a custom rotating image cannot be animated by
+            // templates, since the host renders images as static bitmaps and
+            // throttles template refreshes (~1/s).
+            return GridItem.Builder()
+                .setTitle(button.title)
+                .setLoading(true)
+                .build()
+        }
         val itemBuilder = GridItem.Builder().setTitle(button.title)
         val carIcon = makeCarIconFromBytes(button.imageData)
             ?: if (carContext != null && button.image != null) {
@@ -901,9 +948,9 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
 
         itemBuilder.setImage(carIcon ?: CarIcon.COMPOSE_MESSAGE)
 
-        if (button.isOnPressListenerActive) {
+        if (isClickListenerEnabled && button.isOnPressListenerActive) {
             itemBuilder.setOnClickListener {
-                showLoadingForTemplate(templateElementId, runtimeType, button.loadingMessage)
+                showLoadingForTemplate(templateElementId, runtimeType, button.loadingMessage, button.elementId)
                 sendEvent(
                     type = FAAChannelTypes.onGridButtonPressed.name,
                     data = mapOf("elementId" to button.elementId)
@@ -917,12 +964,27 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
         templateElementId: String,
         runtimeType: String,
         loadingMessage: String? = null,
+        buttonElementId: String? = null,
     ) {
         pendingTemplateElementId = templateElementId
-        val loading = buildLoadingTemplate(runtimeType, loadingMessage, templateBackButtons[templateElementId] ?: false)
+        val addBackButton = templateBackButtons[templateElementId] ?: false
+        val loading = if (runtimeType == "FAAGridTemplate" && buttonElementId != null) {
+            // Rebuild the grid from the stored template data with the tapped cell
+            // in the platform loading state, instead of blanking the whole
+            // template. Falls back to the full loading screen when the data is
+            // no longer available.
+            buildGridItemLoadingTemplate(templateElementId, buttonElementId, loadingMessage, addBackButton)
+        } else {
+            buildLoadingTemplate(runtimeType, loadingMessage, addBackButton)
+        }
 
         if (currentTabBarData != null && currentTabBarData!!.tabs.any { it.elementId == templateElementId }) {
-            currentTemplate = loading
+            val tabbed = currentTemplate as? TabTemplate
+            currentTemplate = if (tabbed != null) {
+                TabTemplate.Builder(tabbed).setTabContents(TabContents.Builder(loading).build()).build()
+            } else {
+                loading
+            }
             currentScreen?.invalidate()
             return
         }
@@ -935,6 +997,23 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
             screensByElementId[templateElementId]?.invalidate()
         }
     }
+
+    private fun buildGridItemLoadingTemplate(
+        templateElementId: String,
+        buttonElementId: String,
+        loadingMessage: String?,
+        addBackButton: Boolean,
+    ): Template {
+        val normal = templatesByElementId[templateElementId] as? GridTemplate
+        val data = templateDataByElementId[templateElementId]
+        val buttons = data?.get("buttons") as? List<*>
+        val index = buttons?.indexOfFirst { (it as? Map<*, *>)?.get("_elementId") == buttonElementId } ?: -1
+        if (normal == null || index < 0) {
+            return buildLoadingTemplate("FAAGridTemplate", loadingMessage, addBackButton)
+        }
+        return buildGridLoadingTemplate(normal, index, loadingMessage)
+    }
+
 
     private fun buildLoadingTemplate(
         runtimeType: String,
@@ -969,6 +1048,9 @@ class FlutterAndroidAutoPlugin : FlutterPlugin, EventChannel.StreamHandler {
     }
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+        pluginScope.coroutineContext[kotlinx.coroutines.Job]?.cancel(
+            kotlinx.coroutines.CancellationException("Flutter engine detached"),
+        )
         channel.setMethodCallHandler(null)
         eventChannel.setStreamHandler(null)
     }
