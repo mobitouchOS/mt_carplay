@@ -1,5 +1,7 @@
 ## Next
 
+- **Now Playing Up Next button:** `FlutterCarplay.setNowPlayingUpNextButton` shows or hides the Up Next button in the top-right corner of the shared Now Playing template and sets its label. Taps reach the listener set with `addListenerOnNowPlayingUpNext`, so the app can push its own queue list.
+
 ## 1.5.1
 
 - **CarPlay cold start:** the last connection status is now replayed when Dart starts listening. Previously a CarPlay-only cold launch connected the scene before Dart subscribed, so `FlutterCarplay.connectionStatus` stayed `unknown` and connection listeners never fired.

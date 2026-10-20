@@ -38,6 +38,10 @@ class FlutterCarplay {
   /// the current connection status.
   Function(ConnectionStatusTypes status)? _onCarplayConnectionChange;
 
+  /// A listener function, which will be triggered when the Up Next button of
+  /// the shared Now Playing template is tapped.
+  void Function()? _onNowPlayingUpNextButtonPressed;
+
   /// Creates an [FlutterCarplay] and starts the connection.
   FlutterCarplay() {
     if (defaultTargetPlatform != TargetPlatform.iOS) return;
@@ -117,6 +121,9 @@ class FlutterCarplay {
             event['data']['elementId'],
           );
           break;
+        case FCPChannelTypes.onNowPlayingUpNextButtonPressed:
+          _onNowPlayingUpNextButtonPressed?.call();
+          break;
         case FCPChannelTypes.onScreenBackButtonPressed:
           final String elementId = event['data']['elementId'];
           final CPTemplate? poppedTemplate = FlutterCarPlayController
@@ -167,6 +174,20 @@ class FlutterCarplay {
   /// on CarPlay connection status changed.
   void removeListenerOnConnectionChange() {
     _onCarplayConnectionChange = null;
+  }
+
+  /// Callback function will be fired when the Up Next button of the shared Now
+  /// Playing template is tapped. The button is shown with
+  /// [setNowPlayingUpNextButton]; the app decides what to present, typically
+  /// a [CPListTemplate] of the upcoming items pushed with [push].
+  void addListenerOnNowPlayingUpNext(void Function() onPressed) {
+    _onNowPlayingUpNextButtonPressed = onPressed;
+  }
+
+  /// Removes the callback function that has been set before in order to listen
+  /// on Up Next button taps.
+  void removeListenerOnNowPlayingUpNext() {
+    _onNowPlayingUpNextButtonPressed = null;
   }
 
   /// Current CarPlay connection status. It will return one of [ConnectionStatusTypes] as String.
@@ -445,6 +466,27 @@ class FlutterCarplay {
         await FlutterCarPlayController.flutterToNativeModule(
       FCPChannelTypes.showNowPlaying,
       animated,
+    );
+    return isCompleted ?? false;
+  }
+
+  /// Shows or hides the Up Next button in the top-right corner of the shared
+  /// Now Playing template. Taps are delivered to the listener set with
+  /// [addListenerOnNowPlayingUpNext].
+  ///
+  /// - title replaces the button's label; when null, the label set previously
+  /// is kept (the system's "Up Next" by default).
+  static Future<bool> setNowPlayingUpNextButton({
+    required bool enabled,
+    String? title,
+  }) async {
+    final bool? isCompleted =
+        await FlutterCarPlayController.flutterToNativeModule(
+      FCPChannelTypes.setNowPlayingUpNextButton,
+      <String, dynamic>{
+        'enabled': enabled,
+        'title': title,
+      },
     );
     return isCompleted ?? false;
   }

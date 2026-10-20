@@ -50,6 +50,8 @@ enum FCPChannelTypes {
   static let onSearchButtonPressed = "onSearchButtonPressed"
   static let updateSearchResults = "updateSearchResults"
   static let onSearchResultSelectedComplete = "onSearchResultSelectedComplete"
+  static let setNowPlayingUpNextButton = "setNowPlayingUpNextButton"
+  static let onNowPlayingUpNextButtonPressed = "onNowPlayingUpNextButtonPressed"
 }
 
 enum FCPAlertActionTypes {

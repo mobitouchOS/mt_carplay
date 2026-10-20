@@ -815,6 +815,22 @@ Navigate to the shared instance of the Now Playing Template. This allows users t
 FlutterCarplay.showSharedNowPlaying(animated: true);
 ```
 
+#### **CarPlay.setNowPlayingUpNextButton**
+
+Shows or hides the Up Next button in the top-right corner of the shared Now Playing template. CarPlay only draws the button; listen for taps and present the queue yourself, typically by pushing a **CPListTemplate**.
+
+- title replaces the button's label. When it is null, the previous label is kept (the system's "Up Next" by default).
+
+```dart
+final flutterCarplay = FlutterCarplay();
+
+await FlutterCarplay.setNowPlayingUpNextButton(enabled: true, title: 'Queue');
+
+flutterCarplay.addListenerOnNowPlayingUpNext(() {
+  FlutterCarplay.push(template: queueListTemplate);
+});
+```
+
 #### **CarPlay.connectionStatus**
 
 Getter for current CarPlay connection status. It will return one of **ConnectionStatusTypes** as String.
