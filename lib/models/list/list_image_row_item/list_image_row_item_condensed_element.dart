@@ -1,6 +1,7 @@
 import 'package:uuid/uuid.dart';
 
 import '../../../controllers/carplay_controller.dart';
+import '../../common/image_size.dart';
 import '../../common/image_tint.dart';
 import 'list_image_row_item_constants.dart';
 import 'list_image_row_item_element.dart';
@@ -23,6 +24,9 @@ class CPListImageRowItemCondensedElement implements CPListImageRowItemElement {
   @override
   AutoImageTint? imageTint;
 
+  @override
+  AutoImageSize? imageSize;
+
   /// The title associated with this element.
   /// iOS 26.0+ | iPadOS 26.0+ | Mac Catalyst 26.0+
   String title;
@@ -44,6 +48,7 @@ class CPListImageRowItemCondensedElement implements CPListImageRowItemElement {
     required this.image,
     required this.title,
     this.imageTint,
+    this.imageSize,
     this.subtitle,
     this.accessorySymbolName,
     this.imageShape = CPListImageRowItemCondensedElementShape.roundedRectangle,
@@ -52,26 +57,38 @@ class CPListImageRowItemCondensedElement implements CPListImageRowItemElement {
 
   @override
   Map<String, dynamic> toJson() => {
-        '_elementId': _elementId,
-        'image': image,
-        'imageTint': imageTint?.toJson(),
-        'title': title,
-        'subtitle': subtitle,
-        'accessorySymbolName': accessorySymbolName,
-        'imageShape': imageShape.name,
-        'runtimeType': 'FCPListImageRowItemCondensedElement',
-      };
+    '_elementId': _elementId,
+    'image': image,
+    'imageTint': imageTint?.toJson(),
+    'imageSize': imageSize?.toJson(),
+    'title': title,
+    'subtitle': subtitle,
+    'accessorySymbolName': accessorySymbolName,
+    'imageShape': imageShape.name,
+    'runtimeType': 'FCPListImageRowItemCondensedElement',
+  };
 
   @override
-  void setImage(String image, {AutoImageTint? imageTint}) {
+  void setImage(
+    String image, {
+    AutoImageTint? imageTint,
+    AutoImageSize? imageSize,
+  }) {
     this.image = image;
     if (imageTint != null) this.imageTint = imageTint;
+    if (imageSize != null) this.imageSize = imageSize;
     FlutterCarPlayController.updateCPListImageRowItemElement(this);
   }
 
   @override
   void setImageTint(AutoImageTint? imageTint) {
     this.imageTint = imageTint;
+    FlutterCarPlayController.updateCPListImageRowItemElement(this);
+  }
+
+  @override
+  void setImageSize(AutoImageSize? imageSize) {
+    this.imageSize = imageSize;
     FlutterCarPlayController.updateCPListImageRowItemElement(this);
   }
 

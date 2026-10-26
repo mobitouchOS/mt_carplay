@@ -20,7 +20,12 @@ let package = Package(
       dependencies: [
         .product(name: "FlutterFramework", package: "FlutterFramework")
       ],
-      resources: []
+      resources: [],
+      linkerSettings: [
+        .linkedFramework("CarPlay"),
+        .linkedFramework("UIKit"),
+        .linkedFramework("AVFoundation"),
+      ]
     )
   ]
 )

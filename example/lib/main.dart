@@ -2,6 +2,8 @@
 
 import 'dart:io';
 
+import 'voice_control_example.dart';
+
 import 'package:flutter/material.dart';
 import 'package:mt_carplay/controllers/android_auto_controller.dart';
 import 'package:mt_carplay/controllers/carplay_controller.dart';
@@ -19,6 +21,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final VoiceControlExample? _voiceExample = Platform.isIOS
+      ? VoiceControlExample()
+      : null;
   ConnectionStatusTypes connectionStatus = ConnectionStatusTypes.unknown;
   final FlutterCarplay _flutterCarplay = FlutterCarplay();
   final FlutterAndroidAuto _flutterAndroidAuto = FlutterAndroidAuto();
@@ -125,6 +130,14 @@ class _MyAppState extends State<MyApp> {
             },
           ),
           CPListItem(
+            text: 'Search Template',
+            detailText: 'Search destinations from a CarPlay root template',
+            onPress: (complete, self) async {
+              await complete();
+              await openSearchTemplate();
+            },
+          ),
+          CPListItem(
             text: 'Action Sheet',
             detailText: 'A template that displays a modal action sheet',
             onPress: (complete, self) {
@@ -175,6 +188,16 @@ class _MyAppState extends State<MyApp> {
               complete();
             },
           ),
+          CPListItem(
+            text: 'Image Size Examples',
+            detailText: 'The same artwork at every AutoImageSize preset.',
+            image: 'images/svg_poi_glyph.svg',
+            imageSize: const AutoImageSize.medium(),
+            onPress: (complete, self) {
+              openImageSizeExamplesTemplate();
+              complete();
+            },
+          ),
         ],
         header: 'Features',
       ),
@@ -212,24 +235,26 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
+    _voiceExample?.dispose();
     _flutterCarplay.removeListenerOnConnectionChange();
     super.dispose();
   }
 
   void onConnectionChange(ConnectionStatusTypes status) {
+    _voiceExample?.connectionChanged(status);
     // Do things when carplay/android auto state is connected, background or disconnected
     setState(() {
       connectionStatus = status;
     });
   }
 
-  void setupAndroidAuto() {
+  Future<void> setupAndroidAuto() async {
     _flutterAndroidAuto.addListenerOnConnectionChange(onConnectionChange);
-    setInitialAndroidAutoRootTemplate();
+    await setInitialAndroidAutoRootTemplate();
   }
 
-  void setInitialAndroidAutoRootTemplate() {
-    FlutterAndroidAuto.setRootTemplate(
+  Future<void> setInitialAndroidAutoRootTemplate() async {
+    await FlutterAndroidAuto.setRootTemplate(
       template: AAListTemplate(
         title: 'Home',
         sections: [
@@ -277,11 +302,14 @@ class _MyAppState extends State<MyApp> {
                                             subtitle: 'Click to pop',
                                             image:
                                                 'https://storage.googleapis.com/cms-storage-bucket/icon_flutter.0dbfcc7a59cd1cf16282.png',
-                                            onPress: (complete,
-                                                AAListItem item) async {
-                                              FlutterAndroidAuto.pop();
-                                              complete();
-                                            },
+                                            onPress:
+                                                (
+                                                  complete,
+                                                  AAListItem item,
+                                                ) async {
+                                                  FlutterAndroidAuto.pop();
+                                                  complete();
+                                                },
                                           ),
                                           AAListItem(
                                             title: 'Page 2',
@@ -289,11 +317,14 @@ class _MyAppState extends State<MyApp> {
                                                 'Click to open pop to root',
                                             image:
                                                 'https://storage.googleapis.com/cms-storage-bucket/icon_flutter.0dbfcc7a59cd1cf16282.png',
-                                            onPress: (complete,
-                                                AAListItem item) async {
-                                              FlutterAndroidAuto.popToRoot();
-                                              complete();
-                                            },
+                                            onPress:
+                                                (
+                                                  complete,
+                                                  AAListItem item,
+                                                ) async {
+                                                  FlutterAndroidAuto.popToRoot();
+                                                  complete();
+                                                },
                                           ),
                                         ],
                                       ),
@@ -308,6 +339,14 @@ class _MyAppState extends State<MyApp> {
                       ],
                     ),
                   );
+                  complete();
+                },
+              ),
+              AAListItem(
+                title: 'Selectable List',
+                subtitle: 'Open Android Auto radio options',
+                onPress: (complete, AAListItem item) {
+                  openAndroidAutoSelectableListTemplate();
                   complete();
                 },
               ),
@@ -340,17 +379,6 @@ class _MyAppState extends State<MyApp> {
                   complete();
                 },
               ),
-            ],
-          ),
-          AAListSection(
-            title: 'Second Section',
-            selectedIndex: 0,
-            onSelected: (selectedIndex, selectedItem) {
-              print('Selected index: $selectedIndex (${selectedItem.title})');
-            },
-            items: [
-              AAListItem(title: 'Radio option 1'),
-              AAListItem(title: 'Radio option 2'),
             ],
           ),
           AAListSection(
@@ -391,7 +419,27 @@ class _MyAppState extends State<MyApp> {
         ],
       ),
     );
-    _flutterAndroidAuto.forceUpdateRootTemplate();
+    await _flutterAndroidAuto.forceUpdateRootTemplate();
+  }
+
+  void openAndroidAutoSelectableListTemplate() {
+    FlutterAndroidAuto.push(
+      template: AAListTemplate(
+        title: 'Selectable List',
+        sections: [
+          AAListSection(
+            selectedIndex: 0,
+            onSelected: (selectedIndex, selectedItem) {
+              print('Selected index: $selectedIndex (${selectedItem.title})');
+            },
+            items: [
+              AAListItem(title: 'Radio option 1'),
+              AAListItem(title: 'Radio option 2'),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   void openAndroidAutoMessageTemplate() {
@@ -413,7 +461,8 @@ class _MyAppState extends State<MyApp> {
   void openAndroidAutoLongMessageTemplate() {
     final template = AALongMessageTemplate(
       title: 'Safety information',
-      message: 'Keep your attention on the road. This longer Android Auto '
+      message:
+          'Keep your attention on the road. This longer Android Auto '
           'message template is intended for content that needs more space than '
           'a simple message screen can provide.',
     );
@@ -423,7 +472,8 @@ class _MyAppState extends State<MyApp> {
     Future.delayed(const Duration(seconds: 3), () {
       template.update(
         title: 'Safety information updated',
-        message: 'The long message template has been rebuilt and refreshed. '
+        message:
+            'The long message template has been rebuilt and refreshed. '
             'Use this template for longer informational text that should remain '
             'readable in Android Auto.',
       );
@@ -589,12 +639,58 @@ class _MyAppState extends State<MyApp> {
                 1 => 'images/icon.svg',
                 _ => 'images/logo_flutter_1080px_clr.png',
               },
-              onPress: () {
+              loadingImage: 'images/svg_media.svg',
+              onPressWithCompletion: (complete, self) async {
                 print('Grid Button $i pressed');
+                await complete();
               },
             ),
         ],
         systemIcon: 'systemIcon',
+      ),
+    );
+  }
+
+  Future<void> openSearchTemplate() async {
+    if (!Platform.isIOS) {
+      print('This example has not been yet updated for Android');
+      return;
+    }
+
+    const destinations = [
+      'Apple Park',
+      'Golden Gate Bridge',
+      'San Francisco Ferry Building',
+      'Ocean Beach',
+      'Twin Peaks',
+    ];
+
+    await FlutterCarplay.setRootTemplate(
+      rootTemplate: CPSearchTemplate(
+        onUpdatedSearchText: (searchText, update) {
+          final query = searchText.trim().toLowerCase();
+          final results = destinations
+              .where(
+                (destination) =>
+                    query.isEmpty || destination.toLowerCase().contains(query),
+              )
+              .map(
+                (destination) => CPListItem(
+                  text: destination,
+                  detailText: 'Search result',
+                  accessoryType: CPListItemAccessoryType.disclosureIndicator,
+                ),
+              )
+              .toList();
+          update(results);
+        },
+        onSelectedResult: (selectedItem, complete) {
+          print('Selected search result: ${selectedItem.text}');
+          complete();
+        },
+        onSearchTemplateSearchButtonPressed: () {
+          print('CarPlay search button pressed');
+        },
       ),
     );
   }
@@ -882,6 +978,88 @@ class _MyAppState extends State<MyApp> {
         ),
       );
     }
+  }
+
+  /// Renders one identical asset at every [AutoImageSize] preset.
+  ///
+  /// This is the direct check that icon size is actually controllable: all five
+  /// rows draw `images/svg_navigation.svg`, and only `imageSize` differs. If
+  /// they render at the same size, sizing is broken.
+  void openImageSizeExamplesTemplate() {
+    if (!Platform.isIOS) return;
+
+    const asset = 'images/svg_navigation.svg';
+    const sizes = <(String, String, AutoImageSize)>[
+      ('Small', '0.5 of the reserved slot', AutoImageSize.small()),
+      (
+        'Medium (default)',
+        '0.7 — matches SF Symbol padding',
+        AutoImageSize.medium(),
+      ),
+      ('Large', '0.85 of the reserved slot', AutoImageSize.large()),
+      ('Max', '1.0 — fills the slot edge to edge', AutoImageSize.max()),
+      (
+        'Custom 0.35',
+        'AutoImageSize.fraction(0.35)',
+        AutoImageSize.fraction(0.35),
+      ),
+    ];
+
+    FlutterCarplay.push(
+      template: CPListTemplate(
+        title: 'Image Sizes',
+        systemIcon: 'arrow.up.left.and.arrow.down.right',
+        sections: [
+          CPListSection(
+            header: 'Same asset, different imageSize',
+            items: [
+              for (final (title, detail, size) in sizes)
+                CPListItem(
+                  text: title,
+                  detailText: detail,
+                  image: asset,
+                  imageSize: size,
+                ),
+            ],
+          ),
+          CPListSection(
+            header: 'Compared with a system icon',
+            items: [
+              CPListItem(
+                text: 'SF Symbol trailing',
+                detailText: 'Default size should read like the system glyph',
+                image: asset,
+                accessoryType: CPListItemAccessoryType.disclosureIndicator,
+              ),
+            ],
+          ),
+          CPListSection(
+            header: 'Every source type at one size',
+            items: [
+              CPListItem(
+                text: 'SVG asset',
+                detailText: 'Rasterized to PNG before reaching native',
+                image: asset,
+                imageSize: const AutoImageSize.medium(),
+              ),
+              CPListItem(
+                text: 'PNG asset',
+                detailText: '842x1043, non-square',
+                image: 'images/logo_flutter_1080px_clr.png',
+                imageSize: const AutoImageSize.medium(),
+              ),
+              CPListItem(
+                text: 'Network URL',
+                detailText: 'Loaded asynchronously',
+                image:
+                    'https://storage.googleapis.com/cms-storage-bucket/icon_flutter.0dbfcc7a59cd1cf16282.png',
+                imageSize: const AutoImageSize.medium(),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   void openTintedGridTemplate() {
@@ -1254,6 +1432,18 @@ class _MyAppState extends State<MyApp> {
               spacing: 20,
               runSpacing: 20,
               children: [
+                if (Platform.isIOS)
+                  Builder(
+                    builder: (context) => ElevatedButton(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) =>
+                              VoiceControlExamplePage(example: _voiceExample!),
+                        ),
+                      ),
+                      child: const Text('Voice control'),
+                    ),
+                  ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     textStyle: const TextStyle(fontSize: 15),
@@ -1315,11 +1505,11 @@ class _MyAppState extends State<MyApp> {
                       horizontal: 24,
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (Platform.isIOS) {
                       setInitialCarplayRootTemplate();
                     } else if (Platform.isAndroid) {
-                      setInitialAndroidAutoRootTemplate();
+                      await setInitialAndroidAutoRootTemplate();
                     }
                   },
                   child: const Text(
